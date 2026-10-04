@@ -365,8 +365,134 @@ function saveOrgPin(pin){ safeSet(ORG_PIN_KEY, pin); }
 
 /* ---------- STORAGE ---------- */
 function safeGet(key){ try{ var v=localStorage.getItem(key); return v?JSON.parse(v):null; }catch(e){ return null; } }
-function safeSet(key,val){ try{ localStorage.setItem(key, JSON.stringify(val)); return true; }catch(e){ return false; } }
-function safeRemove(key){ try{ localStorage.removeItem(key); return true; }catch(e){ return false; } }
+function safeSet(key,val){ try{ localStorage.setItem(key, JSON.stringify(val)); syncQueue(key); return true; }catch(e){ return false; } }
+function safeRemove(key){ try{ localStorage.removeItem(key); syncQueue(key); return true; }catch(e){ return false; } }
+
+/* ---------- SINCRONIZACIÓN (Supabase, tabla kv) ----------
+   localStorage sigue siendo la caché local síncrona: cada escritura se sube a
+   Supabase y los cambios de otros dispositivos se bajan por sondeo. Si no hay
+   red, la app sigue funcionando en local. Apagada en localhost (pruebas) salvo
+   con ?sync=1; se puede apagar en cualquier sitio con ?nosync. */
+var SB_URL = 'https://erzghhfrlwjllmwmhtsn.supabase.co';
+var SB_KEY = 'sb_publishable_c-YyUXwqwTx-ZW85hR7DqA_Oy_3pgXl';
+var SYNC_POLL_MS = 2000;
+var SYNC_ON = (function(){
+  var h=location.hostname||'';
+  if(/[?&]nosync\b/.test(location.search)) return false;
+  if(/[?&]sync=1\b/.test(location.search)) return true;
+  return !(h==='' || h==='localhost' || h==='127.0.0.1' || h==='[::1]' || location.protocol==='file:' || location.protocol==='blob:' || /claude/.test(h));
+})();
+var sync = {ready:false, dirty:{}, ver:{}, timers:{}, seen:{}, cursor:null, lastOk:0, polling:false, onChange:null};
+function canon(v){
+  if(v===null || typeof v!=='object') return JSON.stringify(v);
+  if(Array.isArray(v)) return '['+v.map(canon).join(',')+']';
+  return '{'+Object.keys(v).sort().map(function(k){ return JSON.stringify(k)+':'+canon(v[k]); }).join(',')+'}';
+}
+function syncHeaders(extra){
+  var h={'apikey':SB_KEY, 'Content-Type':'application/json'};
+  if(extra) Object.keys(extra).forEach(function(k){ h[k]=extra[k]; });
+  return h;
+}
+function syncLocal(key){ try{ var r=localStorage.getItem(key); return r===null ? null : JSON.parse(r); }catch(e){ return null; } }
+function syncQueue(key){
+  if(!SYNC_ON || key.indexOf(STORAGE_PREFIX)!==0) return;
+  sync.dirty[key]=true; sync.ver[key]=(sync.ver[key]||0)+1;
+  clearTimeout(sync.timers[key]);
+  sync.timers[key]=setTimeout(function(){ syncFlush(key); }, 120);
+}
+/* Un borrado viaja como marca {__deleted:true}: así los otros dispositivos
+   también lo ven (el sondeo solo detecta filas nuevas o cambiadas). */
+function syncFlush(key){
+  if(!sync.ready || !sync.dirty[key]) return;
+  var val=syncLocal(key), ver=sync.ver[key];
+  var isReq = (key===REQ_KEY && val!==null);
+  var p = isReq
+    ? fetch(SB_URL+'/rest/v1/rpc/kv_merge_requests', {method:'POST', headers:syncHeaders(), body:JSON.stringify({p_key:key, p_incoming:val})})
+    : fetch(SB_URL+'/rest/v1/kv?on_conflict=key', {method:'POST', headers:syncHeaders({'Prefer':'resolution=merge-duplicates,return=representation'}), body:JSON.stringify({key:key, value:(val===null ? {__deleted:true} : val)})});
+  p.then(function(r){ if(!r.ok) throw new Error('sync '+r.status); return r.json(); }).then(function(j){
+    sync.lastOk=Date.now();
+    if(sync.ver[key]!==ver) return;
+    delete sync.dirty[key];
+    if(isReq){
+      if(canon(j)!==canon(val)){ try{ localStorage.setItem(key, JSON.stringify(j)); }catch(e){} if(sync.onChange) sync.onChange([key]); }
+    } else if(j && j[0]){ sync.seen[key]=j[0].updated_at; }
+  }).catch(function(){ clearTimeout(sync.timers[key]); sync.timers[key]=setTimeout(function(){ syncFlush(key); }, 2000); });
+}
+function syncPull(cb){
+  if(sync.polling){ if(cb) cb(false); return; }
+  sync.polling=true;
+  var q='/rest/v1/kv?select=key,value,updated_at&order=updated_at.asc&limit=1000';
+  if(sync.cursor) q+='&updated_at=gt.'+encodeURIComponent(new Date(Date.parse(sync.cursor)-5000).toISOString());
+  fetch(SB_URL+q, {headers:syncHeaders()}).then(function(r){ if(!r.ok) throw new Error('sync '+r.status); return r.json(); }).then(function(rows){
+    var first=!sync.ready;
+    var changed=syncApply(rows, first);
+    /* En la primera carga manda lo que ya está en la nube. */
+    if(first){ sync.dirty={}; sync.ready=true; }
+    sync.lastOk=Date.now(); sync.polling=false;
+    if(changed.length && sync.onChange) sync.onChange(changed);
+    if(cb) cb(true);
+  }).catch(function(){ sync.polling=false; if(cb) cb(false); });
+}
+/* Aplica filas de la nube a localStorage; devuelve las claves que cambiaron. */
+function syncApply(rows, first){
+  var changed=[];
+  rows.forEach(function(row){
+    var key=row.key;
+    if(!key || key.indexOf(STORAGE_PREFIX)!==0) return;
+    if(!sync.cursor || row.updated_at>sync.cursor) sync.cursor=row.updated_at;
+    if(!first && sync.dirty[key]) return;
+    if(sync.seen[key]===row.updated_at) return;
+    sync.seen[key]=row.updated_at;
+    var gone = !!(row.value && row.value.__deleted===true);
+    if(canon(syncLocal(key))===canon(gone ? null : row.value)) return;
+    try{ if(gone) localStorage.removeItem(key); else localStorage.setItem(key, JSON.stringify(row.value)); }catch(e){}
+    changed.push(key);
+  });
+  return changed;
+}
+/* Canal en vivo (Supabase Realtime sobre WebSocket): baja los cambios casi al
+   instante. Si se cae, el sondeo cada 2 s sigue cubriendo y se reconecta solo. */
+function syncRealtime(){
+  var ws, hb, ref=0;
+  function send(o){ try{ ws.send(JSON.stringify(o)); }catch(e){} }
+  function open(){
+    try{ ws=new WebSocket(SB_URL.replace(/^http/,'ws')+'/realtime/v1/websocket?apikey='+encodeURIComponent(SB_KEY)+'&vsn=1.0.0'); }catch(e){ return; }
+    ws.onopen=function(){
+      send({topic:'realtime:rt-kv', event:'phx_join', ref:String(++ref), join_ref:'1', payload:{config:{broadcast:{ack:false,self:false}, presence:{key:''}, postgres_changes:[{event:'*',schema:'public',table:'kv'}], private_channel:false}}});
+      hb=setInterval(function(){ send({topic:'phoenix', event:'heartbeat', payload:{}, ref:String(++ref)}); }, 25000);
+    };
+    ws.onmessage=function(m){
+      var d; try{ d=JSON.parse(m.data); }catch(e){ return; }
+      var rec = d && d.event==='postgres_changes' && d.payload && d.payload.data && d.payload.data.record;
+      if(!rec || !sync.ready) return;
+      sync.lastOk=Date.now();
+      var changed=syncApply([rec], false);
+      if(changed.length && sync.onChange) sync.onChange(changed);
+    };
+    ws.onclose=function(){ clearInterval(hb); setTimeout(open, 3000); };
+    ws.onerror=function(){ try{ ws.close(); }catch(e){} };
+  }
+  open();
+}
+function syncStart(cb){
+  if(!SYNC_ON){ cb(); return; }
+  var done=false; function go(){ if(done) return; done=true; cb(); }
+  setTimeout(go, 3500);
+  syncPull(go);
+  syncRealtime();
+  setInterval(function(){ if(!document.hidden) syncPull(); }, SYNC_POLL_MS);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) syncPull(); });
+  window.addEventListener('online', function(){ syncPull(); });
+  /* Puntito de estado (abajo a la derecha): verde = sincronizado. */
+  var dot=document.createElement('div');
+  dot.style.cssText='position:fixed;right:8px;bottom:8px;width:9px;height:9px;border-radius:50%;opacity:.7;pointer-events:none;z-index:9999';
+  document.body.appendChild(dot);
+  setInterval(function(){
+    var ok = sync.ready && (Date.now()-sync.lastOk)<8000;
+    dot.style.background = ok ? '#2fbf71' : '#e5484d';
+    dot.title = ok ? 'Sincronizado' : 'Sin conexión: los cambios se guardan solo en este dispositivo';
+  }, 1000);
+}
 
 function defaultTeam(id){
   return {
@@ -462,7 +588,18 @@ function undoTurn(){
 
 /* ---------- V3: SOLICITUDES DE VALIDACIÓN ---------- */
 function loadRequests(){ return safeGet(REQ_KEY) || []; }
-function saveRequests(a){ safeSet(REQ_KEY,a); }
+/* Cada solicitud lleva un contador _n que sube con cada cambio: así, al
+   sincronizar entre dispositivos, se conserva la versión más nueva de cada una. */
+function saveRequests(a){
+  var prev={}; loadRequests().forEach(function(r){ prev[r.id]=r; });
+  a.forEach(function(r){
+    var p=prev[r.id];
+    if(!p){ r._n=r._n||1; return; }
+    var x=Object.assign({},r), y=Object.assign({},p); delete x._n; delete y._n;
+    if(JSON.stringify(x)!==JSON.stringify(y)) r._n=(p._n||0)+1;
+  });
+  safeSet(REQ_KEY,a);
+}
 function isActiveReq(r){ return r.status==='open' || r.status==='claimed'; }
 function activeRequestFor(teamId,pid){
   var a=loadRequests().filter(function(r){ return r.teamId===teamId && r.postaId===pid && isActiveReq(r); });
@@ -2581,21 +2718,26 @@ function afterRender(){
 }
 
 /* ---------- INIT / HASH ROUTING (staff access) ---------- */
-var hash = (window.location.hash || '').replace('#','');
-var savedMentor=null; try{ savedMentor=sessionStorage.getItem(MENTOR_SESSION_KEY); }catch(e){}
-if(hash === 'admin') state.showOrgGate=true;
-else if(hash === 'public') state.screen='public';
-else if(hash === 'ruleta') state.screen='wheel';
-else if(hash === 'grupo'){
-  var gsB=readStoredSession('tab');
-  if(groupSessionValid(gsB)){ state.groupMode=gsB.teamId; state.teamId=gsB.teamId; state.screen = loadTeam(gsB.teamId).mission ? 'map' : 'wheel'; }
-  else state.screen='groupEntry';
-}
-else if(savedMentor && mentorById(savedMentor)){ state.screen='mentor'; state.mentorId=savedMentor; }
-else if(hash === 'mentor') state.showMentorGate=true;
+function boot(){
+  var hash = (window.location.hash || '').replace('#','');
+  var savedMentor=null; try{ savedMentor=sessionStorage.getItem(MENTOR_SESSION_KEY); }catch(e){}
+  if(hash === 'admin') state.showOrgGate=true;
+  else if(hash === 'public') state.screen='public';
+  else if(hash === 'ruleta') state.screen='wheel';
+  else if(hash === 'grupo'){
+    var gsB=readStoredSession('tab');
+    if(groupSessionValid(gsB)){ state.groupMode=gsB.teamId; state.teamId=gsB.teamId; state.screen = loadTeam(gsB.teamId).mission ? 'map' : 'wheel'; }
+    else state.screen='groupEntry';
+  }
+  else if(savedMentor && mentorById(savedMentor)){ state.screen='mentor'; state.mentorId=savedMentor; }
+  else if(hash === 'mentor') state.showMentorGate=true;
 
-state.spunKey = spinKey(loadGame());
-render();
+  state.spunKey = spinKey(loadGame());
+  render();
+}
+/* Con la sincronización activa, la primera pantalla espera (máx. 3,5 s) a
+   tener el estado de la nube; sin ella arranca igual que siempre. */
+syncStart(boot);
 
 /* Actualizaciones en vivo: timers cada 5 s en las vistas de seguimiento y
    reacción a cambios hechos en otras pestañas del mismo navegador. */
@@ -2603,15 +2745,17 @@ setInterval(function(){
   if(state.screen==='admin' || state.screen==='public' || state.screen==='mentor'){ softRender(); }
   else if(state.screen==='posta'){ var t=currentTeam(); if(t && state.postaId && t.postas[state.postaId].status==='pending_validation') softRender(); }
 }, 5000);
-window.addEventListener('storage', function(e){
-  if(!e.key || e.key.indexOf(STORAGE_PREFIX)!==0) return;
-  if(e.key===MENTOR_SESSION_KEY || e.key===GROUP_SESSION_KEY) return;
+function sharedKeyNeedsRender(key){
+  if(!key || key.indexOf(STORAGE_PREFIX)!==0) return false;
+  if(key===MENTOR_SESSION_KEY || key===GROUP_SESSION_KEY) return false;
   var sc=state.screen;
   if(sc==='admin' || sc==='public' || sc==='mentor' || sc==='wheel' || sc==='login'){
-    if(sc==='admin' && state.adminTab==='accesos' && e.key===STORAGE_PREFIX+'app_url') return;
-    softRender(); return;
+    return !(sc==='admin' && state.adminTab==='accesos' && key===STORAGE_PREFIX+'app_url');
   }
-  if((sc==='map' || sc==='posta') && (e.key===REQ_KEY || e.key===ACCESS_KEY || e.key===STORAGE_PREFIX+state.teamId)){ softRender(); }
-});
+  return (sc==='map' || sc==='posta') && (key===REQ_KEY || key===ACCESS_KEY || key===STORAGE_PREFIX+state.teamId);
+}
+/* Cambios hechos en otra pestaña del navegador o traídos de la nube. */
+window.addEventListener('storage', function(e){ if(sharedKeyNeedsRender(e.key)) softRender(); });
+sync.onChange = function(keys){ if(keys.some(sharedKeyNeedsRender)) softRender(); };
 })();
 </script>
