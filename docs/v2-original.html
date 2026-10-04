@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RUTA IDEATHON 2026 — V2 (Copy)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand-primary:#0D607C;
+    --brand-secondary:#EF8F49;
+    --brand-secondary-shadow:#B9692A;
+    --brand-dark:#073A4B;
+    --brand-light:#F4F7F8;
+    --success:#2F8F5C;
+    --warning:#C23B3B;
+    --ink:#122A33;
+    --paper:#FBFCFC;
+    --paper-2:#EDF2F3;
+    --line:#D2DCDE;
+    --radius:14px;
+    --font-display:'Space Grotesk',system-ui,-apple-system,sans-serif;
+    --font-body:'Work Sans',system-ui,-apple-system,sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F3F1E7; --paper:#0E1712; --paper-2:#152420; --line:#2B3A34;
+    }
+    :root:not([data-theme="light"]) .stop.current .stop-btn{background:#2E2015;}
+    :root:not([data-theme="light"]) .stop.pending .stop-btn{background:#331612;}
+    :root:not([data-theme="light"]) .warn{background:#3A1611; color:#F2C7B4;}
+    :root:not([data-theme="light"]) .notice{background:#3A2A11; color:#F5D9AE;}
+    :root:not([data-theme="light"]) .info-box{background:#0E2A33; color:#BFE1EA;}
+    :root:not([data-theme="light"]) .choice.selected{background:#0E2A33;}
+    :root:not([data-theme="light"]) .pill.ok{background:#173028;}
+    :root:not([data-theme="light"]) .pill.mid{background:#3A2E11;}
+    :root:not([data-theme="light"]) .pill.alert{background:#3A1E12;}
+    :root:not([data-theme="light"]) .attention-banner{background:#3A1611;}
+    :root:not([data-theme="light"]) .chip-warn{background:#3A1611;}
+    :root:not([data-theme="light"]) .chip-ok{background:#173028;}
+    :root:not([data-theme="light"]) .pill.proceso{background:#0E2A33;}
+    :root:not([data-theme="light"]) .pill.esperando{background:#3A2A11; color:#F0B87A;}
+  }
+  :root[data-theme="dark"]{ --ink:#F3F1E7; --paper:#0E1712; --paper-2:#152420; --line:#2B3A34; }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink); font-family:var(--font-body);
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  h1,h2,h3,.display{font-family:var(--font-display);}
+  a{color:inherit;}
+  button{font-family:var(--font-body);cursor:pointer;}
+  button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{ outline:3px solid var(--brand-secondary); outline-offset:2px; }
+  #app{min-height:100%;}
+  .screen{max-width:640px;margin:0 auto;padding:20px 18px 64px;}
+  .wide{max-width:1120px;}
+
+  .topbar{
+    position:sticky; top:0; z-index:10; padding-top:calc(10px + env(safe-area-inset-top,0px));
+    background:var(--brand-dark); color:var(--brand-light);
+    display:flex; align-items:center; justify-content:space-between;
+    padding-left:18px; padding-right:18px; padding-bottom:10px;
+  }
+  .topbar .tname{font-family:var(--font-display); font-weight:700; letter-spacing:.02em;}
+  .topbar .tmission{font-size:.78rem; opacity:.8;}
+  .topbar button{ background:transparent; border:1px solid rgba(243,241,231,.35); color:var(--brand-light); border-radius:20px; padding:6px 12px; font-size:.78rem; }
+
+  .hero{padding-top:10vh;}
+  .hero h1{font-size:clamp(2.2rem,8vw,3.2rem); line-height:1.02; margin:0 0 6px;}
+  .hero .sub{font-family:var(--font-display); font-weight:600; color:var(--brand-primary); font-size:1.15rem; margin:0 0 22px;}
+  .hero p.tagline{font-size:1.02rem; line-height:1.5; max-width:46ch; color:var(--ink); opacity:.85; margin:0 0 40px;}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; justify-content:center;
+    background:var(--brand-secondary); color:#fff; border:none;
+    font-weight:700; font-size:1rem; padding:15px 26px; border-radius:999px;
+    box-shadow:0 6px 0 0 var(--brand-secondary-shadow); transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:active{transform:translateY(4px); box-shadow:0 2px 0 0 var(--brand-secondary-shadow);}
+  .btn.secondary{background:transparent; color:var(--brand-primary); border:2px solid var(--brand-primary); box-shadow:none; padding:13px 24px;}
+  .btn.secondary:active{transform:translateY(2px);}
+  .btn.ghost{background:transparent; box-shadow:none; color:var(--ink); border:1px solid var(--line); padding:12px 20px;}
+  .btn.small{padding:8px 14px; font-size:.8rem; box-shadow:none;}
+  .btn[disabled]{opacity:.4; box-shadow:none; cursor:not-allowed; transform:none;}
+  .footnote{margin-top:56px; font-size:.78rem; color:var(--ink); opacity:.55;}
+
+  .grid-teams{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:22px;}
+  .team-card{ border:2px solid var(--line); border-radius:var(--radius); padding:18px 14px; background:var(--paper-2); text-align:left; font-family:var(--font-display); font-weight:600; font-size:1.05rem; }
+  .team-card small{display:block; font-family:var(--font-body); font-weight:400; font-size:.72rem; opacity:.65; margin-top:4px;}
+  .team-card.done{border-color:var(--success);}
+
+  .wheel-wrap{display:flex; flex-direction:column; align-items:center; margin-top:18px;}
+  .wheel-frame{position:relative; width:min(78vw,300px); height:min(78vw,300px);}
+  .pointer{ position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:14px solid transparent; border-right:14px solid transparent; border-top:22px solid var(--brand-dark); z-index:3; }
+  .wheel{ width:100%; height:100%; border-radius:50%; position:relative; border:6px solid var(--brand-dark); transition:transform 4.2s cubic-bezier(.17,.67,.16,1); box-shadow:0 10px 30px rgba(0,0,0,.18); }
+  .wheel .slice-pin{ position:absolute; top:50%; left:50%; width:36%; height:0; transform-origin:0 50%; }
+  .wheel .slice-icon{ position:absolute; right:0; top:0; display:inline-block; font-size:1.5rem; line-height:1; filter:drop-shadow(0 1px 2px rgba(0,0,0,.25)); }
+  .wheel-hub{ position:absolute; top:50%; left:50%; width:22%; height:22%; transform:translate(-50%,-50%); background:var(--paper); border-radius:50%; border:4px solid var(--brand-dark); display:flex; align-items:center; justify-content:center; font-size:1.4rem; z-index:2; }
+  .mission-result{ margin-top:26px; width:100%; background:var(--paper-2); border-radius:var(--radius); border:1px solid var(--line); padding:22px; text-align:center; }
+  .mission-result .kicker{font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; color:var(--brand-primary); font-weight:600;}
+  .mission-result h2{font-size:1.6rem; margin:6px 0 14px;}
+  .mission-result .field{text-align:left; margin:10px 0; font-size:.92rem;}
+  .mission-result .field b{display:block; font-family:var(--font-display); font-size:.75rem; text-transform:uppercase; letter-spacing:.04em; color:var(--ink); opacity:.6; margin-bottom:2px;}
+
+  .trail{position:relative; margin:20px 0 10px; padding-left:34px;}
+  .trail::before{ content:''; position:absolute; left:15px; top:8px; bottom:8px; width:3px; background:repeating-linear-gradient(to bottom, var(--line) 0 6px, transparent 6px 12px); }
+  .stop{position:relative; margin-bottom:14px;}
+  .stop-btn{ width:100%; text-align:left; display:flex; gap:14px; align-items:center; background:var(--paper-2); border:2px solid var(--line); border-radius:var(--radius); padding:14px 16px; position:relative; }
+  .stop-node{ position:absolute; left:-34px; top:50%; transform:translateY(-50%); width:34px; height:34px; border-radius:50%; background:var(--paper); border:3px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:1rem; }
+  .stop.completed .stop-node{background:var(--success); border-color:var(--success); color:#fff;}
+  .stop.current .stop-btn{border-color:var(--brand-secondary); background:#FFF1E4;}
+  .stop.current .stop-node{background:var(--brand-secondary); border-color:var(--brand-secondary); color:#fff;}
+  .stop.pending .stop-btn{border-color:var(--warning); background:#FCEAE6;}
+  .stop.pending .stop-node{background:var(--warning); border-color:var(--warning); color:#fff;}
+  .stop.locked .stop-btn{opacity:.5;}
+  .stop-title{font-family:var(--font-display); font-weight:600; font-size:.95rem;}
+  .stop-sub{font-size:.76rem; opacity:.65; margin-top:2px;}
+  .stop-tagline{font-size:.74rem; opacity:.55; margin-top:1px; font-style:italic;}
+  .stamp{margin-left:auto; font-size:.7rem; color:var(--success); font-weight:700; white-space:nowrap;}
+
+  .posta-head{margin-bottom:20px;}
+  .posta-eyebrow{
+    display:inline-block; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+    color:#fff; background:var(--brand-primary); padding:6px 14px; border-radius:20px; margin-bottom:6px;
+  }
+  .posta-head h2{font-size:1.7rem; margin:6px 0 8px;}
+  .posta-head p{opacity:.8; line-height:1.5; margin:0;}
+  .card{background:var(--paper-2); border:1px solid var(--line); border-radius:var(--radius); padding:18px; margin-bottom:16px;}
+  .warn{ background:#FBEAE3; border:1px solid var(--warning); color:#7A2213; border-radius:10px; padding:10px 14px; font-size:.85rem; font-weight:600; margin:14px 0; }
+  .notice{ background:#FDE9D3; border:1px solid var(--brand-secondary); color:#7A4413; border-radius:10px; padding:10px 14px; font-size:.85rem; font-weight:600; margin:14px 0; }
+  .info-box{ background:#E4EEF1; border:1px solid var(--brand-primary); color:#0D4A5F; border-radius:10px; padding:10px 14px; font-size:.85rem; font-weight:600; margin:14px 0; }
+  label{display:block; font-size:.82rem; font-weight:600; margin:14px 0 6px;}
+  input[type=text], input[type=number], input[type=url], textarea, select{
+    width:100%; padding:11px 12px; border-radius:10px; border:1.5px solid var(--line);
+    background:var(--paper); color:var(--ink); font-family:var(--font-body); font-size:.95rem;
+  }
+  textarea{min-height:76px; resize:vertical;}
+  .obj-box{display:flex; align-items:center; justify-content:space-between; background:var(--paper); border:1px dashed var(--line); border-radius:10px; padding:12px 14px; margin:10px 0;}
+  .progress-bar{height:10px; background:var(--paper); border-radius:6px; overflow:hidden; border:1px solid var(--line); margin-top:8px;}
+  .progress-fill{height:100%; background:var(--brand-primary); transition:width .3s ease;}
+  .choice-row{display:flex; flex-direction:column; gap:8px; margin-top:8px;}
+  .choice{ border:1.5px solid var(--line); border-radius:10px; padding:11px 14px; text-align:left; background:var(--paper); font-size:.92rem; }
+  .choice.selected{border-color:var(--brand-primary); background:#E4EEF1;}
+  .idea-row{display:flex; gap:8px; align-items:center; margin:8px 0;}
+  .idea-row span{font-family:var(--font-display); font-weight:700; opacity:.5; width:22px;}
+  .footer-actions{display:flex; gap:10px; margin-top:22px; flex-wrap:wrap;}
+  .backlink{display:inline-block; margin-bottom:16px; font-size:.85rem; opacity:.7;}
+
+  .stat-line{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); font-size:.9rem;}
+  .stat-line:last-child{border-bottom:none;}
+  .badge{width:24px; text-align:center;}
+  .tabs{display:flex; gap:8px; margin:18px 0 6px; flex-wrap:wrap;}
+  .tab{flex:1; min-width:110px; text-align:center; padding:9px; border-radius:10px; border:1.5px solid var(--line); font-weight:600; font-size:.85rem; background:var(--paper-2);}
+  .tab.active{background:var(--brand-primary); color:#fff; border-color:var(--brand-primary);}
+
+  .validation-block{border:1.5px solid var(--warning);}
+  .validation-block h3{margin:2px 0 4px; font-size:1.05rem;}
+  .confirm-panel{text-align:center; padding:34px 18px;}
+  .confirm-panel .big{font-size:2.4rem; margin-bottom:8px;}
+  .confirm-panel h2{margin:0 0 6px;}
+
+  .history-item{padding:9px 0; border-bottom:1px solid var(--line); font-size:.85rem;}
+  .history-item:last-child{border-bottom:none;}
+  .history-item small{display:block; opacity:.6; margin-top:2px;}
+
+  .admin-table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); margin-top:16px;}
+  table{border-collapse:collapse; width:100%; min-width:1180px; font-size:.8rem;}
+  th,td{padding:9px 11px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap;}
+  thead th{background:var(--brand-dark); color:var(--brand-light); position:sticky; top:0;}
+  tbody tr:hover{background:var(--paper-2); cursor:pointer;}
+  .pill{display:inline-block; padding:3px 9px; border-radius:20px; font-size:.72rem; font-weight:700;}
+  .pill.ok{background:#DCEFE1; color:var(--success);}
+  .pill.mid{background:#FCEBCB; color:#8A5B0E;}
+  .pill.no{background:var(--paper-2); color:var(--ink); opacity:.6;}
+  .pill.alert{background:#FBE0D6; color:var(--warning);}
+  .kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin:16px 0;}
+  .kpi{background:var(--paper-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px;}
+  .kpi b{display:block; font-family:var(--font-display); font-size:1.4rem;}
+  .kpi span{font-size:.72rem; opacity:.65;}
+  .filters{display:flex; gap:8px; flex-wrap:wrap; margin:14px 0;}
+  .filters select{width:auto; min-width:140px; font-size:.82rem; padding:8px 10px;}
+
+  .modal-overlay{ position:fixed; inset:0; background:rgba(16,32,28,.55); z-index:50; display:flex; align-items:flex-end; justify-content:center; }
+  @media(min-width:640px){ .modal-overlay{align-items:center;} }
+  .modal{ background:var(--paper); border-radius:18px 18px 0 0; max-width:560px; width:100%; max-height:88vh; overflow-y:auto; padding:22px 20px calc(24px + env(safe-area-inset-bottom,0px)); }
+  @media(min-width:640px){ .modal{border-radius:18px;} }
+  .modal h3{margin-top:0;}
+  .reopen-row{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+
+  .mentor-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); font-size:.88rem;}
+  .mentor-row-v2{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:14px 0; border-bottom:1px solid var(--line);}
+  .mentor-row-v2:last-of-type{border-bottom:none;}
+  .mentor-info{flex:1; min-width:180px;}
+  .mentor-info b{font-size:.95rem;}
+  .mentor-info small{display:block; opacity:.65; font-size:.78rem; margin-top:2px;}
+  .mentor-actions{display:flex; gap:8px; flex-wrap:wrap;}
+  .mentor-edit{flex-direction:column; align-items:stretch;}
+  .mentor-edit-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; width:100%;}
+  .mentor-edit-grid label{margin:0 0 4px;}
+  .mentor-row:last-child{border-bottom:none;}
+  .mentor-row small{display:block; opacity:.6;}
+
+  .public-fullscreen{
+    max-width:1400px; margin:0 auto; padding:14px 20px calc(14px + env(safe-area-inset-bottom,0px));
+    min-height:100dvh; display:flex; flex-direction:column; overflow-x:auto;
+  }
+  .public-topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+  .public-logo{height:26px; opacity:.85;}
+  .public-title-compact{font-size:clamp(1.15rem,2.6vw,1.9rem); margin:2px 0 0; line-height:1.1; font-family:var(--font-display);}
+  .public-sub-compact{font-size:clamp(.8rem,1.3vw,1rem); opacity:.65; margin:2px 0 12px; font-weight:600;}
+  .lm-header-row, .lm-row{
+    display:grid; grid-template-columns:minmax(78px,100px) minmax(110px,150px) minmax(240px,1fr) minmax(120px,190px) 56px minmax(110px,170px);
+    align-items:center; gap:10px;
+  }
+  .lm-header-row{padding:0 12px 4px; font-size:.68rem; text-transform:uppercase; letter-spacing:.04em; opacity:.55; font-weight:700;}
+  .lm-header-row div:last-child, .lm-header-row div:nth-child(5){text-align:right;}
+  .lm-list{display:flex; flex-direction:column; flex:1; justify-content:space-evenly; gap:6px;}
+  .lm-row{padding:7px 12px; border-radius:10px; background:var(--paper-2); border:1px solid var(--line);}
+  .lm-row.lm-finished{background:linear-gradient(90deg, rgba(47,143,92,.14), var(--paper-2)); border-color:var(--success);}
+  .lm-group{font-family:var(--font-display); font-weight:700; font-size:clamp(.85rem,1.6vw,1.1rem); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .lm-mission{font-size:clamp(.66rem,1.1vw,.82rem); opacity:.75; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .lm-track{display:flex; align-items:center; gap:1px; overflow:visible; min-width:0;}
+  .lm-node{
+    width:15px; height:15px; min-width:12px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:.52rem; font-weight:700; border:2px solid var(--line); background:var(--paper); color:var(--ink); flex-shrink:1; transition:all .3s ease;
+  }
+  .lm-connector{flex:1 1 4px; height:3px; background:var(--line); min-width:2px; border-radius:2px;}
+  .lm-connector.done{background:var(--success);}
+  .lm-node.done{background:var(--success); border-color:var(--success); color:#fff;}
+  .lm-node.current{background:var(--brand-primary); border-color:var(--brand-primary); color:#fff; width:21px; height:21px; min-width:18px; font-size:.62rem; box-shadow:0 0 0 3px rgba(13,96,124,.22); flex-shrink:0;}
+  .lm-node.waiting{background:var(--brand-secondary); border-color:var(--brand-secondary); color:#fff; width:21px; height:21px; min-width:18px; font-size:.62rem; animation:pulseWait 1.4s ease-in-out infinite; flex-shrink:0;}
+  .lm-node.pending{opacity:.4;}
+  @keyframes pulseWait{ 0%,100%{ box-shadow:0 0 0 0 rgba(239,143,73,.5); } 50%{ box-shadow:0 0 0 8px rgba(239,143,73,0); } }
+  .lm-current{font-size:clamp(.66rem,1.1vw,.82rem); opacity:.8; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .lm-pct{font-family:var(--font-display); font-weight:700; font-size:clamp(.9rem,1.6vw,1.2rem); color:var(--brand-primary); text-align:right;}
+  .lm-finished .lm-pct{color:var(--success);}
+  .lm-estado{font-size:clamp(.64rem,1.1vw,.8rem); font-weight:700; text-align:right; white-space:nowrap;}
+  .lm-estado-proceso{color:var(--brand-primary);}
+  .lm-estado-esperando{color:var(--brand-secondary);}
+  .lm-estado-reformulando{color:var(--warning);}
+  .lm-estado-finalizado{color:var(--success);}
+  .lm-estado-sin_iniciar{opacity:.55;}
+  .public-legend-compact{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; font-size:clamp(.65rem,1.1vw,.8rem); opacity:.7; margin-top:10px;}
+  .org-link{display:block; margin-top:14px; font-size:.75rem; opacity:.4; text-decoration:none;}
+  .attention-banner{background:#FBEAE3; border:2px solid var(--warning); border-radius:var(--radius); padding:12px 16px; margin:14px 0;}
+  .attention-title{font-family:var(--font-display); font-weight:700; color:var(--warning); font-size:.95rem; margin-bottom:8px;}
+  .attention-item{
+    display:block; width:100%; text-align:left; background:transparent; border:none; border-top:1px solid rgba(194,59,59,.2);
+    padding:6px 0; font-size:.85rem; color:var(--ink); font-weight:600;
+  }
+  .attention-item:first-of-type{border-top:none;}
+  .attention-item:hover{color:var(--warning);}
+  .chips-row{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;}
+  .chip{border:none; border-radius:20px; padding:6px 14px; font-size:.8rem; font-weight:700;}
+  .chip-warn{background:#FBEAE3; color:var(--warning);}
+  .chip-ok{background:#DCEFE1; color:var(--success);}
+  .pill.proceso{background:#E4EEF1; color:var(--brand-primary);}
+  .pill.esperando{background:#FDE9D3; color:#8A4E14;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- BRAND ---------- */
+var LOGO_FULL_B64 = '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';
+
+/* ---------- DATA ---------- */
+var MISSIONS = [
+  {id:'m1', name:'MENOS BASURA', eje:'Reducción de residuos', pregunta:'¿Qué estamos tirando que podríamos evitar?', foco:'Detectar fuentes evitables de residuos en la vida cotidiana del equipo y su entorno inmediato.', icon:'🗑️'},
+  {id:'m2', name:'SEGUNDA VIDA', eje:'Reutilización y circularidad', pregunta:'¿Qué estamos tirando que todavía podría servir?', foco:'Encontrar objetos o materiales descartados que todavía podrían reutilizarse antes de convertirse en basura.', icon:'♻️'},
+  {id:'m3', name:'SEPARAR MEJOR', eje:'Separación en origen', pregunta:'¿Qué vemos que pasa cuando tiramos nuestros residuos?', foco:'Observar qué ocurre con los residuos desde que se generan hasta que se separan (o no se separan).', icon:'🗂️'},
+  {id:'m4', name:'NO TODO VA AL MISMO LUGAR', eje:'Residuos peligrosos', pregunta:'¿Qué residuos necesitan un destino distinto al de la basura común?', foco:'Identificar residuos que requieren un tratamiento o destino diferente al de la basura común.', icon:'⚠️'},
+  {id:'m5', name:'ANTES DE QUE SE ACUMULE', eje:'Prevención de puntos críticos', pregunta:'¿Qué lugares de nuestro entorno acumulan residuos una y otra vez?', foco:'Detectar puntos del entorno donde los residuos se acumulan de forma recurrente.', icon:'🧹'},
+  {id:'m6', name:'SABEMOS… ¿PERO LO HACEMOS?', eje:'Hábitos y corresponsabilidad ambiental', pregunta:'¿Qué sabemos que deberíamos hacer, pero no siempre hacemos?', foco:'Explorar la brecha entre lo que sabemos que deberíamos hacer y lo que efectivamente hacemos.', icon:'🤔'},
+  {id:'m7', name:'¿LO PODEMOS MEDIR?', eje:'Tecnología y monitoreo ambiental', pregunta:'¿Qué situación ambiental nos gustaría observar o medir mejor?', foco:'Pensar qué situación ambiental podría observarse o monitorearse con más precisión.', icon:'📊'}
+];
+
+var POSTAS = [
+  {id:'p1', num:1, title:'DESCUBRÍ EL PROBLEMA', icon:'🔍', tagline:'Detectá una situación concreta.'},
+  {id:'p2', num:2, title:'VALIDÁ EL PROBLEMA', icon:'🧪', tagline:'Comprobá con evidencia que realmente existe.'},
+  {id:'p3', num:3, title:'FORMULÁ EL DESAFÍO', icon:'🎯', tagline:'Transformá el problema en una oportunidad.'},
+  {id:'p4', num:4, title:'CREÁ UNA SOLUCIÓN', icon:'💡', tagline:'Generá alternativas y elegí una.'},
+  {id:'p5', num:5, title:'VALIDÁ LA SOLUCIÓN', icon:'🔁', tagline:'Probala con personas reales.'},
+  {id:'p6', num:6, title:'CONSTRUÍ EL PROTOTIPO', icon:'🛠️', tagline:'Hacé visible tu idea.'},
+  {id:'p7', num:7, title:'PREPARÁ EL PITCH', icon:'🎤', tagline:'Contá el recorrido y defendé la solución.'}
+];
+var POSTA_BY_ID = {}; var POSTA_INDEX = {};
+POSTAS.forEach(function(p,i){ POSTA_BY_ID[p.id]=p; POSTA_INDEX[p.id]=i; });
+function nextPostaId(id){ var i=POSTA_INDEX[id]; return (i+1<POSTAS.length) ? POSTAS[i+1].id : null; }
+
+var TEAM_IDS = ['g1','g2','g3','g4','g5','g6','g7'];
+function teamLabel(id){ return 'GRUPO ' + id.replace('g',''); }
+
+var STORAGE_PREFIX = 'rutaideathon_v2_';
+var MISSIONS_TAKEN_KEY = STORAGE_PREFIX + 'missions_taken';
+var MENTORS_KEY = STORAGE_PREFIX + 'mentors';
+var ORG_PIN_KEY = STORAGE_PREFIX + 'org_pin';
+function loadOrgPin(){ return safeGet(ORG_PIN_KEY) || '2026'; }
+function saveOrgPin(pin){ safeSet(ORG_PIN_KEY, pin); }
+
+/* ---------- STORAGE ---------- */
+function safeGet(key){ try{ var v=localStorage.getItem(key); return v?JSON.parse(v):null; }catch(e){ return null; } }
+function safeSet(key,val){ try{ localStorage.setItem(key, JSON.stringify(val)); return true; }catch(e){ return false; } }
+function safeRemove(key){ try{ localStorage.removeItem(key); return true; }catch(e){ return false; } }
+
+function defaultTeam(id){
+  return {
+    id:id, label:teamLabel(id), members:'', mission:null, missionAcceptedAt:null, validations:[],
+    lastActivityAt:null, pendingRework:null,
+    postas:{
+      p1:{status:'current', enteredAt:Date.now(), q1:'', q2:'', q3:'', problem:''},
+      p2:{status:'locked', enteredAt:null, count:'', link:'', evidence:'', l1:'', l2:'', l3:'', verdict:'', adjustedProblem:''},
+      p3:{status:'locked', enteredAt:null, challenge:''},
+      p4:{status:'locked', enteredAt:null, ideas:['','',''], solName:'', solWhat:'', solWho:'', solHow:'', solChange:'', solNeed:'', solWhy:''},
+      p5:{status:'locked', enteredAt:null, count:'', link:'', evidence:'', changeText:''},
+      p6:{status:'locked', enteredAt:null, type:'', file:'', link:'', shows:'', improve:''},
+      p7:{status:'locked', enteredAt:null, problem:'', evidence:'', challenge:'', solution:'', validation:'', changes:'', impact:'', close:'', duration:''}
+    }
+  };
+}
+function activatePosta(team,pid){ team.postas[pid].status='current'; team.postas[pid].enteredAt=Date.now(); }
+function loadTeam(id){
+  var t = safeGet(STORAGE_PREFIX+id);
+  if(!t) return defaultTeam(id);
+  /* migrate older saved records that predate newer fields, so KPIs and
+     alerts never contradict each other because of missing data */
+  if(t.lastActivityAt===undefined || t.lastActivityAt===null){ t.lastActivityAt = t.missionAcceptedAt || (t.mission ? Date.now() : null); }
+  if(t.pendingRework===undefined) t.pendingRework = null;
+  if(t.school!==undefined) delete t.school;
+  POSTAS.forEach(function(p){
+    if(t.postas[p.id].enteredAt===undefined) t.postas[p.id].enteredAt = (p.id==='p1') ? (t.missionAcceptedAt||Date.now()) : null;
+  });
+  return t;
+}
+function saveTeam(t){ t.lastActivityAt=Date.now(); safeSet(STORAGE_PREFIX+t.id, t); }
+function saveTeamSilent(t){ safeSet(STORAGE_PREFIX+t.id, t); }
+function touchActivity(teamId){ var t=loadTeam(teamId); saveTeam(t); }
+
+function takenMissions(){ return safeGet(MISSIONS_TAKEN_KEY) || []; }
+function markMissionTaken(mid){ var a=takenMissions(); if(a.indexOf(mid)===-1){ a.push(mid); safeSet(MISSIONS_TAKEN_KEY,a); } }
+
+var MENTOR_ESTADOS = [
+  {k:'disponible', t:'Disponible'},
+  {k:'ocupado', t:'Ocupado / Validando'},
+  {k:'no_disponible', t:'No disponible'},
+  {k:'inactivo', t:'Inactivo'}
+];
+function mentorEstadoLabel(k){ var e=MENTOR_ESTADOS.filter(function(x){return x.k===k;})[0]; return e?e.t:'Disponible'; }
+function mentorFullName(m){
+  var full=((m.nombre||'')+' '+(m.apellido||'')).trim();
+  return full || m.name || 'Mentor';
+}
+function normalizeMentor(m){
+  if(m.estado===undefined){ m.estado = (m.active===false) ? 'inactivo' : 'disponible'; }
+  if(m.nombre===undefined || m.apellido===undefined){
+    var parts=(m.name||'Mentor').trim().split(' ');
+    m.nombre = m.nombre!==undefined ? m.nombre : parts[0];
+    m.apellido = m.apellido!==undefined ? m.apellido : parts.slice(1).join(' ');
+  }
+  m.name = mentorFullName(m);
+  if(m.specialty===undefined) m.specialty='';
+  if(m.org===undefined) m.org='';
+  return m;
+}
+function defaultMentors(){
+  var list=[];
+  for(var i=1;i<=10;i++){ list.push(normalizeMentor({id:'me'+i, nombre:'Mentor/a', apellido:String(i), specialty:'', org:'', estado:'disponible'})); }
+  return list;
+}
+function isUntouchedPlaceholder(m){
+  return /^Mentor\/a \d+$/.test(m.name) && !m.specialty && !m.org;
+}
+function loadMentors(){
+  var stored = safeGet(MENTORS_KEY);
+  if(!stored) { var fresh=defaultMentors(); saveMentors(fresh); return fresh; }
+  stored = stored.map(normalizeMentor);
+  if(stored.length > 0 && stored.length <= 3 && stored.every(isUntouchedPlaceholder)){
+    var upgraded=defaultMentors();
+    saveMentors(upgraded);
+    return upgraded;
+  }
+  return stored;
+}
+function saveMentors(list){ safeSet(MENTORS_KEY, list.map(normalizeMentor)); }
+function mentorById(id){ return loadMentors().filter(function(m){return m.id===id;})[0]; }
+function mentorDisplayName(record){
+  var m = mentorById(record.mentorId);
+  return m ? mentorFullName(m) : (record.mentorName || 'Mentor eliminado');
+}
+
+/* ---------- ROUTER ---------- */
+var state = { screen:'welcome', teamId:null, postaId:null, wheelLanded:null, tab:'mapa', notice:'', confirmApproved:null, showGuideForm:false, showOrgGate:false, orgPinError:'', showResetConfirm:false, adminTab:'resumen', adminDetail:null, adminFilters:{team:'',mission:'',status:'',mentor:''}, editingMentorId:null, confirmDeleteMentorId:null, showAddMentorForm:false, activityFilters:{mentor:'',team:'',posta:''} };
+
+function go(screen, extra){
+  state.screen = screen; state.notice=''; state.showGuideForm=false; state.showOrgGate=false; state.orgPinError=''; state.showResetConfirm=false;
+  if(extra) Object.assign(state, extra);
+  render();
+  window.scrollTo(0,0);
+}
+
+function render(){
+  var app = document.getElementById('app');
+  var html='';
+  if(state.screen==='welcome') html = renderWelcome();
+  else if(state.screen==='login') html = renderLogin();
+  else if(state.screen==='wheel') html = renderWheel();
+  else if(state.screen==='map') html = renderMap();
+  else if(state.screen==='posta') html = renderPosta();
+  else if(state.screen==='admin') html = renderAdmin();
+  else if(state.screen==='public') html = renderPublic();
+  app.innerHTML = html;
+  afterRender();
+}
+function currentTeam(){ return state.teamId ? loadTeam(state.teamId) : null; }
+function esc(s){ if(s===undefined||s===null) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function missingNotice(list){ return list.join(' '); }
+function getVal(id, fallback){ var el=document.getElementById(id); return el ? el.value : fallback; }
+function captureDraftFields(pid){
+  var team=currentTeam(); var d=team.postas[pid];
+  if(pid==='p2'){
+    d.count=getVal('p2count',d.count); d.link=getVal('p2link',d.link); d.evidence=getVal('p2evidence',d.evidence);
+    d.l1=getVal('p2l1',d.l1); d.l2=getVal('p2l2',d.l2); d.l3=getVal('p2l3',d.l3);
+    d.adjustedProblem=getVal('p2adjusted',d.adjustedProblem);
+  } else if(pid==='p5'){
+    d.count=getVal('p5count',d.count); d.link=getVal('p5link',d.link); d.evidence=getVal('p5evidence',d.evidence);
+    d.changeText=getVal('p5change',d.changeText);
+  }
+  saveTeam(team);
+  return team;
+}
+function updateLiveProgress(prefix, rawVal){
+  var count=parseInt(rawVal||0,10)||0;
+  var pct=Math.min(100,Math.round((count/15)*100));
+  var fill=document.getElementById(prefix+'ProgressFill');
+  var disp=document.getElementById(prefix+'CountDisplay');
+  if(fill) fill.style.width=pct+'%';
+  if(disp) disp.textContent=count+'/15';
+}
+
+function topbar(team){
+  if(!team) return '';
+  var missionName = team.mission ? team.mission.name : 'sin asignar';
+  return '<div class="topbar">' +
+    '<div><div class="tname">' + team.label + '</div><div class="tmission">Misión: ' + esc(missionName) + '</div></div>' +
+    '<button data-nav="welcome">Salir</button>' +
+  '</div>';
+}
+
+/* ---------- WELCOME ---------- */
+function renderWelcome(){
+  var orgGate = state.showOrgGate ? renderOrgGateModal() : '';
+  return '<div class="screen hero">' +
+    (LOGO_FULL_B64 ? '<img src="data:image/png;base64,'+LOGO_FULL_B64+'" alt="+I Consultora Internacional" style="height:26px;margin-bottom:26px;">' : '') +
+    '<h1 class="display">RUTA IDEATHON 2026</h1>' +
+    '<div class="sub">De la Misión a la Solución</div>' +
+    '<p class="tagline">Un recorrido para descubrir, validar, crear, probar y comunicar soluciones.</p>' +
+    '<button class="btn" data-nav="login">COMENZAR</button>' +
+    '<button class="btn secondary" style="margin-top:12px;" data-nav="public">VER PROGRESO EN VIVO</button>' +
+    '<div class="footnote">Metodología desarrollada por +I Consultora Internacional</div>' +
+    '<a href="#" class="org-link" data-action="openOrgGate">Organización →</a>' +
+  '</div>' + orgGate;
+}
+function openOrgGate(){ state.showOrgGate=true; state.orgPinError=''; render(); }
+function closeOrgGate(){ state.showOrgGate=false; state.orgPinError=''; render(); }
+function submitOrgPin(){
+  var val = getVal('orgPinInput','');
+  if(val === loadOrgPin()){
+    state.showOrgGate=false; go('admin');
+  } else {
+    state.orgPinError='PIN incorrecto. Probá de nuevo.'; render();
+  }
+}
+function renderOrgGateModal(){
+  var err = state.orgPinError ? '<div class="warn">'+esc(state.orgPinError)+'</div>' : '';
+  return '<div class="modal-overlay" data-close-org="1"><div class="modal">' +
+    '<h3>Acceso de organización</h3>' +
+    '<p style="font-size:.85rem;opacity:.7;">Ingresá el PIN del equipo organizador para ver el panel de gestión.</p>' +
+    err +
+    '<label for="orgPinInput">PIN</label><input type="text" id="orgPinInput" inputmode="numeric" placeholder="••••">' +
+    '<div class="footer-actions">' +
+      '<button class="btn" data-action="submitOrgPin">INGRESAR</button>' +
+      '<button class="btn ghost" data-action="closeOrgGate">CANCELAR</button>' +
+    '</div>' +
+  '</div></div>';
+}
+
+/* ---------- LOGIN ---------- */
+function renderLogin(){
+  var cards = TEAM_IDS.map(function(id){
+    var t = loadTeam(id);
+    var done = t.mission ? 'done' : '';
+    var sub = t.mission ? t.mission.name : 'Sin misión asignada';
+    return '<button class="team-card '+done+'" data-team="'+id+'">'+teamLabel(id)+'<small>'+esc(sub)+'</small></button>';
+  }).join('');
+  return '<div class="screen">' +
+    '<a href="#" class="backlink" data-nav="welcome">← Volver</a>' +
+    '<h2>Elegí tu equipo</h2>' +
+    '<p style="opacity:.75;font-size:.92rem;">Tocá tu grupo para ingresar al recorrido.</p>' +
+    '<div class="grid-teams">'+cards+'</div>' +
+  '</div>';
+}
+
+/* ---------- WHEEL ---------- */
+function renderWheel(){
+  var team = currentTeam();
+  var slices=7;
+  var colors=['#0D607C','#EF8F49','#073A4B','#0D607C','#EF8F49','#073A4B','#EF8F49'];
+  var gradParts=[];
+  for(var i=0;i<slices;i++){ var a0=(360/slices)*i, a1=(360/slices)*(i+1); gradParts.push(colors[i]+' '+a0+'deg '+a1+'deg'); }
+  var conic='conic-gradient('+gradParts.join(',')+')';
+  var labels = MISSIONS.map(function(m,i){ var mid=(360/slices)*i+(360/slices)/2; return '<div class="slice-pin" style="transform:rotate('+mid+'deg);"><span class="slice-icon" style="transform:translate(50%,-50%) rotate('+(-mid)+'deg);">'+m.icon+'</span></div>'; }).join('');
+
+  var resultBlock='';
+  if(state.wheelLanded){
+    var m = state.wheelLanded;
+    resultBlock = '<div class="mission-result">' +
+      '<div class="kicker">Tu misión es</div>' +
+      '<h2>'+m.icon+' '+esc(m.name)+'</h2>' +
+      '<div class="field"><b>Eje</b>'+esc(m.eje)+'</div>' +
+      '<div class="field"><b>Pregunta disparadora</b>'+esc(m.pregunta)+'</div>' +
+      '<div class="field"><b>Foco</b>'+esc(m.foco)+'</div>' +
+      '<div class="warn">Todavía no busquen la solución. Primero identifiquen una situación concreta.</div>' +
+      '<button class="btn" style="margin-top:6px;width:100%;" data-action="acceptMission">ACEPTAR MISIÓN</button>' +
+    '</div>';
+  }
+  return '<div class="screen wheel-wrap">' +
+    '<a href="#" class="backlink" data-nav="login" style="align-self:flex-start;">← Cambiar de equipo</a>' +
+    '<h2 style="text-align:center;">'+team.label+'</h2>' +
+    '<p style="opacity:.75;text-align:center;font-size:.9rem;max-width:38ch;">Girá la rueda para descubrir la misión ambiental de tu equipo. Una vez aceptada, no podrá volver a girarse.</p>' +
+    '<div class="wheel-frame"><div class="pointer"></div><div class="wheel" id="wheelEl" style="background:'+conic+';">'+labels+'<div class="wheel-hub">🌎</div></div></div>' +
+    '<button class="btn" id="spinBtn" style="margin-top:22px;" '+(state.wheelLanded?'disabled':'')+'>GIRAR LA RUEDA</button>' +
+    resultBlock +
+  '</div>';
+}
+function pickMission(){
+  var taken=takenMissions();
+  var avail=MISSIONS.filter(function(m){ return taken.indexOf(m.id)===-1; });
+  if(avail.length===0) avail=MISSIONS.slice();
+  return avail[Math.floor(Math.random()*avail.length)];
+}
+function spinWheel(){
+  var wheelEl=document.getElementById('wheelEl');
+  var spinBtn=document.getElementById('spinBtn');
+  if(!wheelEl || wheelEl.dataset.spinning==='1') return;
+  wheelEl.dataset.spinning='1'; spinBtn.setAttribute('disabled','disabled');
+  var sliceAngle=360/7; var target=pickMission(); var idx=MISSIONS.indexOf(target);
+  var sliceCenter=sliceAngle*idx+sliceAngle/2;
+  var finalRotation=5*360+(360-sliceCenter);
+  wheelEl.style.transform='rotate('+finalRotation+'deg)';
+  setTimeout(function(){ state.wheelLanded=target; wheelEl.dataset.spinning='0'; render(); }, 4300);
+}
+function acceptMission(){
+  var team=currentTeam();
+  team.mission=state.wheelLanded; team.missionAcceptedAt=Date.now();
+  markMissionTaken(team.mission.id);
+  saveTeam(team); state.wheelLanded=null;
+  go('map');
+}
+
+/* ---------- MAP ("MI RUTA") ---------- */
+function postaStatusLabel(st){
+  if(st==='completed') return 'Completada';
+  if(st==='pending_validation') return 'Esperando mentor';
+  if(st==='current') return 'En curso';
+  return 'Bloqueada';
+}
+function currentPostaId(team){
+  for(var i=0;i<POSTAS.length;i++){ if(team.postas[POSTAS[i].id].status!=='completed') return POSTAS[i].id; }
+  return null;
+}
+function countCompleted(team){ return POSTAS.filter(function(p){ return team.postas[p.id].status==='completed'; }).length; }
+
+function renderMap(){
+  var team = currentTeam();
+  var completedCount = countCompleted(team);
+  var pct = Math.round((completedCount/POSTAS.length)*100);
+  var tabsHtml = '<div class="tabs">' +
+    '<button class="tab '+(state.tab==='mapa'?'active':'')+'" data-tab="mapa">Mi ruta</button>' +
+    '<button class="tab '+(state.tab==='progreso'?'active':'')+'" data-tab="progreso">Mi progreso</button>' +
+  '</div>';
+
+  var body;
+  if(state.tab==='progreso'){
+    body = renderTeamDashboardInner(team);
+  } else {
+    var trail = POSTAS.map(function(p){
+      var st = team.postas[p.id].status;
+      var cls = st==='completed' ? 'completed' : (st==='pending_validation' ? 'pending' : (st==='current' ? 'current' : 'locked'));
+      var clickable = (st!=='locked');
+      var node = st==='completed' ? '✓' : p.icon;
+      return '<div class="stop '+cls+'">' +
+        '<button class="stop-btn" '+(clickable?'data-posta="'+p.id+'"':'disabled')+'>' +
+          '<div class="stop-node">'+node+'</div>' +
+          '<div><div class="stop-title">POSTA '+p.num+' · '+p.title+'</div>' +
+          '<div class="stop-sub">'+postaStatusLabel(st)+'</div>' +
+          '<div class="stop-tagline">'+esc(p.tagline)+'</div></div>' +
+          (st==='completed' ? '<div class="stamp">SELLADO</div>' : '') +
+        '</button></div>';
+    }).join('');
+    body = '<h2 style="margin:0 0 2px;">MI RUTA</h2><p style="opacity:.65;font-size:.85rem;margin:0 0 12px;">Camino de la misión</p>' +
+      '<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%;"></div></div>' +
+      '<p style="font-size:.8rem;opacity:.65;margin-top:6px;">'+completedCount+' de '+POSTAS.length+' postas completadas</p>' +
+      '<div class="trail">'+trail+'</div>';
+  }
+  return topbar(team) + '<div class="screen">' + tabsHtml + body + '</div>';
+}
+
+function renderTeamDashboardInner(team){
+  var lines = POSTAS.map(function(p){
+    var st = team.postas[p.id].status;
+    var icon = st==='completed'?'✅':(st==='pending_validation'||st==='current'?'🟠':'🔒');
+    var extra='';
+    if(p.id==='p2' && team.postas.p2.count) extra=' — '+team.postas.p2.count+' respuestas';
+    if(p.id==='p5' && team.postas.p5.count) extra=' — '+team.postas.p5.count+'/15 respuestas';
+    return '<div class="stat-line"><span class="badge">'+icon+'</span><span>'+p.title+extra+'</span></div>';
+  });
+  var history = (team.validations||[]).slice().sort(function(a,b){return a.ts-b.ts;}).map(function(v){
+    return '<div class="history-item">Posta '+POSTA_BY_ID[v.postaId].num+' — '+esc(v.postaTitle)+' — Validada por '+esc(mentorDisplayName(v))+'<small>'+v.date+' · '+v.time+(v.observation?' · "'+esc(v.observation)+'"':'')+'</small></div>';
+  });
+  return '<div class="card">' +
+    '<div style="font-family:var(--font-display);font-weight:700;font-size:1.1rem;margin-bottom:2px;">'+team.label+'</div>' +
+    '<div style="font-size:.85rem;opacity:.7;margin-bottom:10px;">Misión: '+(team.mission?esc(team.mission.name):'—')+'</div>' +
+    lines.join('') +
+  '</div>' +
+  '<div class="card"><b style="font-size:.8rem;text-transform:uppercase;opacity:.6;">Historial de validaciones</b>' +
+    (history.length ? history.join('') : '<div class="history-item" style="opacity:.6;">Todavía no hay postas validadas.</div>') +
+  '</div>';
+}
+
+/* ---------- VALIDATION BLOCK (shared) ---------- */
+function renderValidationBlock(postaId){
+  var mentors = loadMentors().filter(function(m){ return m.estado!=='inactivo'; });
+  var options = mentors.map(function(m){
+    var extra = m.specialty||m.org ? (' — '+[m.specialty,m.org].filter(Boolean).join(' · ')) : '';
+    var suffix = m.estado==='ocupado' ? ' (Validando)' : (m.estado==='no_disponible' ? ' (No disponible)' : '');
+    var disabled = m.estado==='no_disponible' ? 'disabled' : '';
+    return '<option value="'+m.id+'" '+disabled+'>'+esc(mentorFullName(m))+esc(extra)+esc(suffix)+'</option>';
+  }).join('');
+  return '<div class="info-box">¡Buen trabajo! Ahora llamen a un mentor o facilitador para validar esta posta.</div>' +
+  '<div class="card validation-block">' +
+    '<h3>VALIDACIÓN DE POSTA</h3>' +
+    '<label for="valMentor">Mentor/facilitador que valida</label>' +
+    '<select id="valMentor"><option value="">Elegir…</option>'+options+'</select>' +
+    '<label for="valObs">Observación del mentor/facilitador</label>' +
+    '<textarea id="valObs" placeholder="Opcional"></textarea>' +
+    '<div class="footer-actions"><button class="btn" data-action="approvePosta" data-approve-posta="'+postaId+'">APROBAR POSTA</button></div>' +
+  '</div>';
+}
+function renderConfirmPanel(){
+  var c = state.confirmApproved;
+  var nextLine = c.nextTitle ? ('Se desbloqueó: '+c.nextTitle) : '¡Recorrido completo! Su equipo está listo para el pitch final.';
+  return '<div class="card confirm-panel">' +
+    '<div class="big">'+(c.nextTitle?'✅':'🏁')+'</div>' +
+    '<h2>'+(c.nextTitle?'POSTA SUPERADA':'PITCH LISTO ✓')+'</h2>' +
+    '<p style="opacity:.75;">'+esc(nextLine)+'</p>' +
+    '<p style="font-weight:700;color:var(--brand-primary);margin-top:14px;">¡Ya están más cerca de la solución!</p>' +
+    '<button class="btn" style="margin-top:10px;" data-action="continueAfterConfirm">CONTINUAR</button>' +
+  '</div>';
+}
+function continueAfterConfirm(){ state.confirmApproved=null; go('map'); }
+
+function approvePosta(postaId){
+  var sel=document.getElementById('valMentor');
+  var mentorId = sel ? sel.value : '';
+  if(!mentorId){ state.notice='Seleccioná qué mentor o facilitador está validando.'; render(); return; }
+  var mentors=loadMentors();
+  var mentor=mentors.filter(function(m){return m.id===mentorId;})[0];
+  var obsEl=document.getElementById('valObs');
+  var obs = obsEl ? obsEl.value.trim() : '';
+  var team=currentTeam();
+  var now=new Date();
+  var verdictVal = (postaId==='p2'||postaId==='p5') ? (team.postas[postaId].verdict||'ok') : null;
+  var record={
+    postaId:postaId, postaTitle:POSTA_BY_ID[postaId].title,
+    team:team.id, teamLabel:team.label, mission:team.mission?team.mission.name:'',
+    mentorId:mentor.id, mentorName:mentor.name,
+    date:now.toLocaleDateString('es-AR'), time:now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),
+    ts:now.getTime(), observation:obs, verdict:verdictVal
+  };
+  team.validations = team.validations || [];
+  team.validations.push(record);
+  team.postas[postaId].status='completed';
+  if(team.pendingRework && team.pendingRework.postaId===postaId){ team.pendingRework=null; }
+  var nid=nextPostaId(postaId); var nextTitle=null;
+  if(nid){ activatePosta(team,nid); nextTitle=POSTA_BY_ID[nid].title; }
+  saveTeam(team);
+  mentors = mentors.map(function(m){ if(m.id===mentor.id) m.estado='disponible'; return m; });
+  saveMentors(mentors);
+  state.notice='';
+  state.confirmApproved={postaId:postaId, nextTitle:nextTitle};
+  render();
+}
+
+/* ---------- POSTA SCREENS ---------- */
+function openPosta(id){ touchActivity(state.teamId); go('posta', {postaId:id}); }
+
+function renderPosta(){
+  var team=currentTeam(); var pid=state.postaId;
+  if(state.confirmApproved){
+    return topbar(team) + '<div class="screen">' + renderConfirmPanel() + '</div>';
+  }
+  var body='';
+  if(pid==='p1') body=postaP1(team);
+  else if(pid==='p2') body=postaP2(team);
+  else if(pid==='p3') body=postaP3(team);
+  else if(pid==='p4') body=postaP4(team);
+  else if(pid==='p5') body=postaP5(team);
+  else if(pid==='p6') body=postaP6(team);
+  else if(pid==='p7') body=postaP7(team);
+  var noticeHtml = state.notice ? '<div class="notice">'+esc(state.notice)+'</div>' : '';
+  var validationHtml='';
+  var lastRecord=null;
+  if(team.postas[pid].status==='pending_validation'){ validationHtml = renderValidationBlock(pid); }
+  if(team.postas[pid].status==='completed'){
+    var recs=(team.validations||[]).filter(function(v){return v.postaId===pid;});
+    lastRecord = recs.length ? recs[recs.length-1] : null;
+  }
+  var sealedHtml = lastRecord ? '<div class="info-box">Posta sellada — Validada por '+esc(mentorDisplayName(lastRecord))+' el '+lastRecord.date+' a las '+lastRecord.time+(lastRecord.observation?'<br>"'+esc(lastRecord.observation)+'"':'')+'</div>' : '';
+  var guideModal = !state.showGuideForm ? '' : (pid==='p2' ? renderValidationFormModal() : (pid==='p5' ? renderSolutionGuideModal() : ''));
+  return topbar(team) + '<div class="screen">' +
+    '<a href="#" class="backlink" data-nav="map">← Mi ruta</a>' +
+    noticeHtml + body + validationHtml + sealedHtml +
+  '</div>' + guideModal;
+}
+
+/* POSTA 1 */
+function postaP1(team){
+  var d=team.postas.p1; var locked = d.status==='pending_validation' || d.status==='completed';
+  var m = team.mission;
+  var missionCard = m ? (
+    '<div class="card" style="border-color:var(--brand-primary);">' +
+      '<b style="font-size:.75rem;text-transform:uppercase;opacity:.6;">Misión de este equipo</b>' +
+      '<p style="margin:6px 0 2px;font-family:var(--font-display);font-weight:700;">'+m.icon+' '+esc(m.name)+'</p>' +
+      '<p style="margin:0;font-size:.85rem;opacity:.75;"><b>Eje:</b> '+esc(m.eje)+'</p>' +
+      '<p style="margin:4px 0 0;font-size:.85rem;opacity:.75;"><b>Pregunta disparadora:</b> '+esc(m.pregunta)+'</p>' +
+    '</div>'
+  ) : '';
+  return '<div class="posta-head"><div class="posta-eyebrow">Posta 1</div>' +
+    '<h2>MIRÁ · ELEGÍ · DECILO</h2>' +
+    '<p>Antes de pensar una solución, necesitamos comprender qué está pasando. Respondan las tres preguntas pensando en la pregunta disparadora de su misión.</p></div>' +
+    missionCard +
+    '<div class="card">' +
+      '<label for="p1q1">¿Qué vemos?</label><textarea id="p1q1" '+(locked?'disabled':'')+'>'+esc(d.q1)+'</textarea>' +
+      '<label for="p1q2">¿Dónde pasa?</label><textarea id="p1q2" '+(locked?'disabled':'')+'>'+esc(d.q2)+'</textarea>' +
+      '<label for="p1q3">¿Por qué nos preocupa?</label><textarea id="p1q3" '+(locked?'disabled':'')+'>'+esc(d.q3)+'</textarea>' +
+      '<div class="warn">TODAVÍA NO BUSQUEN LA SOLUCIÓN</div>' +
+      '<label for="p1problem">Nuestro problema es:</label>' +
+      '<textarea id="p1problem" '+(locked?'disabled':'')+'>'+esc(d.problem)+'</textarea>' +
+      '<div class="info-box">El problema debe ser concreto, observable y estar relacionado con la misión asignada.</div>' +
+    '</div>' +
+    (d.status==='current' ? '<div class="footer-actions"><button class="btn" data-action="requestP1">SOLICITAR VALIDACIÓN</button></div>' : '');
+}
+function requestP1(){
+  var team=currentTeam(); var d=team.postas.p1;
+  var q1=document.getElementById('p1q1').value.trim();
+  var q2=document.getElementById('p1q2').value.trim();
+  var q3=document.getElementById('p1q3').value.trim();
+  var problem=document.getElementById('p1problem').value.trim();
+  d.q1=q1; d.q2=q2; d.q3=q3; d.problem=problem;
+  var missing1=[];
+  if(!q1) missing1.push('Falta responder "¿Qué vemos?".');
+  if(!q2) missing1.push('Falta responder "¿Dónde pasa?".');
+  if(!q3) missing1.push('Falta responder "¿Por qué nos preocupa?".');
+  if(!problem) missing1.push('La definición del problema ("Nuestro problema es…") debe completarse.');
+  if(missing1.length){ saveTeam(team); state.notice=missingNotice(missing1); render(); return; }
+  d.status='pending_validation';
+  saveTeam(team); render();
+}
+
+/* POSTA 2 */
+function postaP2(team){
+  var d=team.postas.p2; var locked = d.status==='pending_validation' || d.status==='completed';
+  var count=parseInt(d.count||0,10)||0; var pct=Math.min(100,Math.round((count/15)*100));
+  var verdictOptions=[
+    {v:'ok', t:'Sí, el problema quedó validado.'},
+    {v:'ajustar', t:'Sí, pero la formulación necesita ajustarse.'},
+    {v:'no', t:'No, el problema no era el correcto.'}
+  ];
+  var verdictHtml=verdictOptions.map(function(o){ return '<button class="choice '+(d.verdict===o.v?'selected':'')+'" data-verdict="'+o.v+'" data-verdict-for="p2" '+(locked?'disabled':'')+'>'+o.t+'</button>'; }).join('');
+  var adjustedField = d.verdict==='ajustar' ? (
+    '<label for="p2adjusted">Problema reformulado (a partir de la evidencia)</label>' +
+    '<textarea id="p2adjusted" '+(locked?'disabled':'')+'>'+esc(d.adjustedProblem)+'</textarea>'
+  ) : '';
+  var noInfo = d.verdict==='no' ? '<div class="warn">La evidencia muestra que este problema no era el correcto. Al solicitar, volverán directo a la Posta 1 a redefinirlo — esta vuelta no pasa por el mentor.</div>' : '';
+  return '<div class="posta-head"><div class="posta-eyebrow">Posta 2</div>' +
+    '<h2>¿El problema que detectaron realmente existe?</h2>' +
+    '<p>Salgan a comprobarlo. No busquen personas que simplemente les den la razón. Busquen evidencia.</p></div>' +
+    '<div class="obj-box"><div><b>Objetivo</b><div style="font-size:.8rem;opacity:.7;">Mínimo 15 validaciones · recomendado 20 o más</div></div><div id="p2CountDisplay" style="font-family:var(--font-display);font-weight:700;font-size:1.2rem;">'+count+'/15</div></div>' +
+    '<div class="progress-bar"><div class="progress-fill" id="p2ProgressFill" style="width:'+pct+'%;"></div></div>' +
+    '<button class="btn secondary" style="margin-top:14px;" data-action="openForm" '+(locked?'disabled':'')+'>ABRIR FORMULARIO DE VALIDACIÓN</button>' +
+    '<div class="card" style="margin-top:16px;">' +
+      '<label for="p2count">Cantidad de respuestas obtenidas</label><input type="number" min="0" id="p2count" value="'+esc(d.count)+'" '+(locked?'disabled':'')+'>' +
+      '<label for="p2link">Link al formulario</label><input type="text" id="p2link" value="'+esc(d.link)+'" '+(locked?'disabled':'')+'>' +
+      '<label for="p2evidence">Captura del resumen / evidencia</label><input type="text" id="p2evidence" value="'+esc(d.evidence)+'" '+(locked?'disabled':'')+'>' +
+      '<label for="p2l1">Lo que más se repitió fue…</label><textarea id="p2l1" '+(locked?'disabled':'')+'>'+esc(d.l1)+'</textarea>' +
+      '<label for="p2l2">Algo que no esperábamos encontrar fue…</label><textarea id="p2l2" '+(locked?'disabled':'')+'>'+esc(d.l2)+'</textarea>' +
+      '<label for="p2l3">Después de escuchar a las personas entendimos que…</label><textarea id="p2l3" '+(locked?'disabled':'')+'>'+esc(d.l3)+'</textarea>' +
+    '</div>' +
+    '<label>¿El problema quedó validado?</label><div class="choice-row">'+verdictHtml+'</div>' +
+    adjustedField + noInfo +
+    (d.status==='current' ? '<div class="footer-actions"><button class="btn" data-action="requestP2">SOLICITAR VALIDACIÓN</button></div>' : '');
+}
+function setVerdict(pid, v){
+  var team=captureDraftFields(pid);
+  if(team.postas[pid].status!=='current') return;
+  team.postas[pid].verdict=v;
+  saveTeam(team); render();
+}
+function openForm(){ state.showGuideForm=true; render(); }
+function renderValidationFormModal(){
+  return '<div class="modal-overlay" data-close-guide="1"><div class="modal">' +
+    '<h3>Modelo orientativo de preguntas</h3>' +
+    '<div class="info-box">Esta es una guía para armar su propio formulario de validación (por ejemplo, en Google Forms). No se responde acá adentro: después de crearlo, peguen el link del formulario real más abajo, en "Link al formulario".</div>' +
+    '<label>¿Observaste alguna vez esta situación?</label><select><option>Sí</option><option>No</option><option>No estoy seguro/a</option></select>' +
+    '<label>¿Con qué frecuencia ocurre?</label><select><option>Muy frecuentemente</option><option>Frecuentemente</option><option>Algunas veces</option><option>Casi nunca</option><option>Nunca</option></select>' +
+    '<label>¿Dónde la observás principalmente?</label><select><option>Escuela</option><option>Hogar</option><option>Barrio/comunidad</option><option>Espacio público</option><option>Otro</option></select>' +
+    '<label>¿A quiénes creés que afecta principalmente?</label><input type="text">' +
+    '<label>¿Qué consecuencia genera esta situación?</label><textarea></textarea>' +
+    '<label>¿Qué es lo que más te preocupa de este problema?</label><textarea></textarea>' +
+    '<div class="footer-actions"><button class="btn" data-action="closeGuideForm">CERRAR</button></div>' +
+  '</div></div>';
+}
+function closeGuideForm(){ state.showGuideForm=false; render(); }
+function renderSolutionGuideModal(){
+  return '<div class="modal-overlay" data-close-guide="1"><div class="modal">' +
+    '<h3>Guía de preguntas para validar la solución</h3>' +
+    '<div class="info-box">Usen estas preguntas como orientación para comprobar si la solución se entiende, resulta útil y realmente ayuda a resolver el problema identificado. No se responde acá adentro: después de armar su formulario (por ejemplo, en Google Forms), peguen el link real más abajo, en "Enlace".</div>' +
+    '<label>1. ¿Entendés cómo funcionaría esta solución?</label><select><option>Sí, claramente</option><option>Más o menos</option><option>No</option></select>' +
+    '<label>2. ¿Cuánto creés que esta solución ayudaría a resolver el problema?</label><select><option>Mucho</option><option>Bastante</option><option>Poco</option><option>Nada</option></select>' +
+    '<label>3. ¿Qué parte de la solución te parece más útil o valiosa?</label><textarea></textarea>' +
+    '<label>4. ¿Qué dificultad o problema ves para usarla o implementarla?</label><textarea></textarea>' +
+    '<label>5. ¿Qué cambiarías o mejorarías de esta solución?</label><textarea></textarea>' +
+    '<label>6. ¿Usarías, apoyarías o recomendarías esta solución?</label><select><option>Sí</option><option>Tal vez</option><option>No</option></select>' +
+    '<label>7. ¿Por qué?</label><textarea></textarea>' +
+    '<label>8. Después de conocer la propuesta, ¿pensás que realmente ayudaría a resolver el problema identificado?</label><select><option>Sí</option><option>Sí, pero necesita ajustes</option><option>No, habría que pensar otra solución</option></select>' +
+    '<div class="footer-actions"><button class="btn" data-action="closeGuideForm">CERRAR</button></div>' +
+  '</div></div>';
+}
+function requestP2(){
+  var team=captureDraftFields('p2'); var d=team.postas.p2;
+  var count=parseInt(d.count||0,10)||0;
+  var missing2=[];
+  if(!d.verdict) missing2.push('Debe indicar si el problema quedó validado, necesita ajustes o no fue validado.');
+  var remaining=Math.max(0,15-count);
+  if(remaining>0) missing2.push('Faltan '+remaining+' validaciones (llevás '+count+'/15).');
+  if(!d.link) missing2.push('Falta cargar el link al formulario.');
+  if(!d.l1) missing2.push('Falta completar "Lo que más se repitió fue…".');
+  if(!d.l2) missing2.push('Falta completar "Algo que no esperábamos encontrar fue…".');
+  if(!d.l3) missing2.push('Falta completar "Después de escuchar a las personas entendimos que…".');
+  if(d.verdict==='ajustar' && !d.adjustedProblem) missing2.push('Falta la formulación ajustada del problema.');
+  if(missing2.length){ saveTeam(team); state.notice=missingNotice(missing2); render(); return; }
+
+  if(d.verdict==='no'){
+    activatePosta(team,'p1');
+    team.postas.p2.status='locked';
+    team.postas.p2.count=''; team.postas.p2.link=''; team.postas.p2.evidence='';
+    team.postas.p2.l1=''; team.postas.p2.l2=''; team.postas.p2.l3='';
+    team.postas.p2.verdict=''; team.postas.p2.adjustedProblem='';
+    team.pendingRework={postaId:'p1', reason:'problema no validado', ts:Date.now()};
+    saveTeam(team);
+    go('posta', {postaId:'p1', notice:'La evidencia mostró que el problema no era el correcto. Redefinan el problema y después vuelvan a validarlo con nueva evidencia.'});
+    return;
+  }
+  if(d.verdict==='ajustar'){
+    team.postas.p1.problem = d.adjustedProblem;
+  }
+  d.status='pending_validation'; saveTeam(team); render();
+}
+
+/* POSTA 3 */
+function postaP3(team){
+  var d=team.postas.p3; var locked = d.status==='pending_validation' || d.status==='completed';
+  var problem=team.postas.p1.problem||'(sin definir aún)';
+  return '<div class="posta-head"><div class="posta-eyebrow">Posta 3</div>' +
+    '<h2>Formulá el desafío</h2><p>Ahora conviertan el problema en una oportunidad para crear.</p></div>' +
+    '<div class="card"><b style="font-size:.75rem;text-transform:uppercase;opacity:.6;">Problema validado</b><p style="margin:6px 0 0;">'+esc(problem)+'</p></div>' +
+    '<label for="p3challenge">Nuestro desafío es: ¿Cómo podríamos…?</label>' +
+    '<textarea id="p3challenge" '+(locked?'disabled':'')+'>'+esc(d.challenge)+'</textarea>' +
+    (d.status==='current' ? '<div class="footer-actions"><button class="btn" data-action="requestP3">ENVIAR DESAFÍO</button></div>' : '');
+}
+function requestP3(){
+  var team=currentTeam(); var val=document.getElementById('p3challenge').value.trim();
+  team.postas.p3.challenge=val;
+  if(!val){ saveTeam(team); state.notice=missingNotice(['Falta escribir el desafío ("¿Cómo podríamos…?").']); render(); return; }
+  team.postas.p3.status='pending_validation'; saveTeam(team); render();
+}
+
+/* POSTA 4 */
+function postaP4(team){
+  var d=team.postas.p4; var locked = d.status==='pending_validation' || d.status==='completed';
+  var ideasHtml=[0,1,2].map(function(i){ return '<div class="idea-row"><span>'+(i+1)+'</span><input type="text" id="p4idea'+i+'" value="'+esc(d.ideas[i])+'" placeholder="Idea '+(i+1)+'" '+(locked?'disabled':'')+'></div>'; }).join('');
+  return '<div class="posta-head"><div class="posta-eyebrow">Posta 4</div>' +
+    '<h2>Creá una solución</h2><p>Primero generen posibilidades. Después elijan.</p></div>' +
+    '<div class="card">'+ideasHtml+'</div>' +
+    '<div class="card">' +
+      '<b style="font-size:.8rem;text-transform:uppercase;opacity:.7;">Solución elegida</b>' +
+      '<label for="p4name">Nombre de la solución</label><input type="text" id="p4name" value="'+esc(d.solName)+'" '+(locked?'disabled':'')+'>' +
+      '<label for="p4what">¿Qué propone?</label><textarea id="p4what" '+(locked?'disabled':'')+'>'+esc(d.solWhat)+'</textarea>' +
+      '<label for="p4who">¿A quién beneficia?</label><textarea id="p4who" '+(locked?'disabled':'')+'>'+esc(d.solWho)+'</textarea>' +
+      '<label for="p4how">¿Cómo funcionaría?</label><textarea id="p4how" '+(locked?'disabled':'')+'>'+esc(d.solHow)+'</textarea>' +
+      '<label for="p4change">¿Qué cambia respecto de lo que ocurre hoy?</label><textarea id="p4change" '+(locked?'disabled':'')+'>'+esc(d.solChange)+'</textarea>' +
+      '<label for="p4need">¿Qué necesitaríamos para implementarla?</label><textarea id="p4need" '+(locked?'disabled':'')+'>'+esc(d.solNeed)+'</textarea>' +
+      '<label for="p4why">¿Por qué creemos que responde al problema validado?</label><textarea id="p4why" '+(locked?'disabled':'')+'>'+esc(d.solWhy)+'</textarea>' +
+    '</div>' +
+    (d.status==='current' ? '<div class="footer-actions"><button class="btn" data-action="requestP4">SOLICITAR VALIDACIÓN</button></div>' : '');
+}
+function requestP4(){
+  var team=currentTeam(); var d=team.postas.p4;
+  d.ideas=[0,1,2].map(function(i){ return document.getElementById('p4idea'+i).value; });
+  d.solName=document.getElementById('p4name').value; d.solWhat=document.getElementById('p4what').value;
+  d.solWho=document.getElementById('p4who').value; d.solHow=document.getElementById('p4how').value;
+  d.solChange=document.getElementById('p4change').value; d.solNeed=document.getElementById('p4need').value;
+  d.solWhy=document.getElementById('p4why').value;
+  var missing4=[];
+  d.ideas.forEach(function(x,i){ if(!x||!x.trim()) missing4.push('Falta completar la Idea '+(i+1)+'.'); });
+  if(!d.solName) missing4.push('Falta el nombre de la solución.');
+  if(!d.solWhat) missing4.push('Falta indicar qué propone la solución.');
+  if(missing4.length){ saveTeam(team); state.notice=missingNotice(missing4); render(); return; }
+  d.status='pending_validation'; saveTeam(team); render();
+}
+
+/* POSTA 5 */
+function postaP5(team){
+  var d=team.postas.p5; var locked = d.status==='pending_validation' || d.status==='completed';
+  var count=parseInt(d.count||0,10)||0; var pct=Math.min(100,Math.round((count/15)*100));
+  var verdictOptions=[
+    {v:'ok', t:'Sí, la solución quedó validada.'},
+    {v:'ajustar', t:'Sí, pero la solución necesita ajustes.'},
+    {v:'no', t:'No, esta solución no funciona o no resuelve el problema.'}
+  ];
+  var verdictHtml=verdictOptions.map(function(o){ return '<button class="choice '+(d.verdict===o.v?'selected':'')+'" data-verdict="'+o.v+'" data-verdict-for="p5" '+(locked?'disabled':'')+'>'+o.t+'</button>'; }).join('');
+  var noInfo = d.verdict==='no' ? '<div class="warn">La evidencia muestra que esta solución no funciona. Al solicitar, volverán directo a la Posta 4 a reformularla — esta vuelta no pasa por el mentor.</div>' : '';
+  return '<div class="posta-head"><div class="posta-eyebrow">Posta 5</div><h2>Validá la solución</h2>' +
+    '<div class="warn">AHORA NO VALIDAMOS EL PROBLEMA. VALIDAMOS LA SOLUCIÓN.</div></div>' +
+    '<div class="obj-box"><div><b>Objetivo</b><div style="font-size:.8rem;opacity:.7;">Mínimo 15 validaciones · recomendado 20 o más</div></div><div id="p5CountDisplay" style="font-family:var(--font-display);font-weight:700;font-size:1.2rem;">'+count+'/15</div></div>' +
+    '<div class="progress-bar"><div class="progress-fill" id="p5ProgressFill" style="width:'+pct+'%;"></div></div>' +
+    '<button class="btn secondary" style="margin-top:14px;" data-action="openForm" '+(locked?'disabled':'')+'>ABRIR FORMULARIO DE VALIDACIÓN</button>' +
+    '<div class="card" style="margin-top:16px;">' +
+      '<label for="p5count">Cantidad de respuestas</label><input type="number" min="0" id="p5count" value="'+esc(d.count)+'" '+(locked?'disabled':'')+'>' +
+      '<label for="p5link">Enlace</label><input type="text" id="p5link" value="'+esc(d.link)+'" '+(locked?'disabled':'')+'>' +
+      '<label for="p5evidence">Captura / evidencia</label><input type="text" id="p5evidence" value="'+esc(d.evidence)+'" '+(locked?'disabled':'')+'>' +
+      '<label for="p5change">Después de validar, decidimos cambiar…</label><textarea id="p5change" '+(locked?'disabled':'')+'>'+esc(d.changeText)+'</textarea>' +
+    '</div>' +
+    '<label>¿La solución quedó validada?</label><div class="choice-row">'+verdictHtml+'</div>' +
+    noInfo +
+    (d.status==='current' ? '<div class="footer-actions"><button class="btn" data-action="requestP5">SOLICITAR VALIDACIÓN</button></div>' : '');
+}
+function requestP5(){
+  var team=captureDraftFields('p5'); var d=team.postas.p5;
+  var count=parseInt(d.count||0,10)||0;
+  var missing5=[];
+  if(!d.verdict) missing5.push('Debe indicar si la solución quedó validada, necesita ajustes o no fue validada.');
+  var remaining=Math.max(0,15-count);
+  if(remaining>0) missing5.push('Faltan '+remaining+' validaciones (llevás '+count+'/15).');
+  if(!d.link) missing5.push('Falta cargar el enlace de validación.');
+  if((d.verdict==='ok'||d.verdict==='ajustar') && !d.changeText) missing5.push('Falta completar "Después de validar, decidimos cambiar…".');
+  if(missing5.length){ saveTeam(team); state.notice=missingNotice(missing5); render(); return; }
+
+  if(d.verdict==='no'){
+    activatePosta(team,'p4');
+    team.postas.p5.status='locked';
+    team.postas.p5.count=''; team.postas.p5.link=''; team.postas.p5.evidence=''; team.postas.p5.changeText=''; team.postas.p5.verdict='';
+    team.pendingRework={postaId:'p4', reason:'solución no validada', ts:Date.now()};
+    saveTeam(team);
+    go('posta', {postaId:'p4', notice:'La evidencia mostró que esta solución no resuelve el problema. Reformulen la propuesta o elijan otra alternativa y después vuelvan a validarla.'});
+    return;
+  }
+  d.status='pending_validation'; saveTeam(team); render();
+}
+
+/* POSTA 6 */
+function postaP6(team){
+  var d=team.postas.p6; var locked = d.status==='pending_validation' || d.status==='completed';
+  var types=['Maqueta','Dibujo','Storyboard','Interfaz','Esquema','Modelo físico','Simulación','Pieza digital','Otro'];
+  var options=types.map(function(t){ return '<option '+(d.type===t?'selected':'')+'>'+t+'</option>'; }).join('');
+  return '<div class="posta-head"><div class="posta-eyebrow">Posta 6</div><h2>Hacé visible tu solución</h2></div>' +
+    '<div class="card">' +
+      '<label for="p6type">Tipo de prototipo</label><select id="p6type" '+(locked?'disabled':'')+'><option value="">Elegir…</option>'+options+'</select>' +
+      '<label for="p6file">Foto o archivo (nombre / descripción)</label><input type="text" id="p6file" value="'+esc(d.file)+'" '+(locked?'disabled':'')+'>' +
+      '<label for="p6link">Link</label><input type="text" id="p6link" value="'+esc(d.link)+'" '+(locked?'disabled':'')+'>' +
+      '<label for="p6shows">¿Qué muestra nuestro prototipo?</label><textarea id="p6shows" '+(locked?'disabled':'')+'>'+esc(d.shows)+'</textarea>' +
+      '<label for="p6improve">¿Qué parte todavía deberíamos mejorar?</label><textarea id="p6improve" '+(locked?'disabled':'')+'>'+esc(d.improve)+'</textarea>' +
+    '</div>' +
+    (d.status==='current' ? '<div class="footer-actions"><button class="btn" data-action="requestP6">SOLICITAR VALIDACIÓN</button></div>' : '');
+}
+function requestP6(){
+  var team=currentTeam(); var d=team.postas.p6;
+  d.type=document.getElementById('p6type').value; d.file=document.getElementById('p6file').value;
+  d.link=document.getElementById('p6link').value; d.shows=document.getElementById('p6shows').value;
+  d.improve=document.getElementById('p6improve').value;
+  var missing6=[];
+  if(!d.type) missing6.push('Falta elegir el tipo de prototipo.');
+  if(!d.shows) missing6.push('Falta responder "¿Qué muestra nuestro prototipo?".');
+  if(missing6.length){ saveTeam(team); state.notice=missingNotice(missing6); render(); return; }
+  d.status='pending_validation'; saveTeam(team); render();
+}
+
+/* POSTA 7 */
+function postaP7(team){
+  var d=team.postas.p7; var locked = d.status==='pending_validation' || d.status==='completed';
+  var fields=[['problem','El problema','¿Qué detectamos?'],['evidence','La evidencia','¿Cómo sabemos que existe?'],['challenge','El desafío','¿Qué nos propusimos resolver?'],['solution','Nuestra solución','¿Qué creamos?'],['validation','La segunda validación','¿Qué dijeron las personas?'],['changes','Lo que cambiamos','¿Qué aprendimos y mejoramos?'],['impact','El impacto','¿Qué podría cambiar si se implementara?'],['close','Cierre','¿Por qué vale la pena apoyar esta idea?']];
+  var fieldsHtml=fields.map(function(f){ return '<label for="p7'+f[0]+'">'+f[1]+' — <span style="font-weight:400;opacity:.65;">'+f[2]+'</span></label><textarea id="p7'+f[0]+'" '+(locked?'disabled':'')+'>'+esc(d[f[0]])+'</textarea>'; }).join('');
+  return '<div class="posta-head"><div class="posta-eyebrow">Posta 7</div><h2>Prepará tu pitch</h2></div>' +
+    '<div class="card">'+fieldsHtml +
+      '<label for="p7duration">Duración máxima del pitch (minutos)</label><input type="number" min="1" id="p7duration" value="'+esc(d.duration)+'" '+(locked?'disabled':'')+'>' +
+    '</div>' +
+    (d.status==='current' ? '<div class="footer-actions"><button class="btn" data-action="requestP7">ESTAMOS LISTOS PARA PRESENTAR</button></div>' : '');
+}
+function requestP7(){
+  var team=currentTeam(); var d=team.postas.p7;
+  ['problem','evidence','challenge','solution','validation','changes','impact','close'].forEach(function(k){ d[k]=document.getElementById('p7'+k).value; });
+  d.duration=document.getElementById('p7duration').value;
+  var missing7=[];
+  if(!d.problem) missing7.push('Falta completar "El problema".');
+  if(!d.solution) missing7.push('Falta completar "Nuestra solución".');
+  if(!d.close) missing7.push('Falta completar el "Cierre".');
+  if(missing7.length){ saveTeam(team); state.notice=missingNotice(missing7); render(); return; }
+  d.status='pending_validation'; saveTeam(team); render();
+}
+
+/* ---------- ADMIN ---------- */
+function publicStatus(team){
+  if(countCompleted(team)===7) return 'Finalizado';
+  var cur=currentPostaId(team); var st=team.postas[cur].status;
+  if(st==='pending_validation') return 'Esperando mentor';
+  if(postaHasDraft(team,cur)) return 'En trabajo';
+  return 'Posta superada';
+}
+function postaHasDraft(team,pid){
+  var d=team.postas[pid];
+  if(pid==='p1') return !!(d.q1||d.q2||d.q3||d.problem);
+  if(pid==='p2') return !!(d.count||d.link||d.l1);
+  if(pid==='p3') return !!d.challenge;
+  if(pid==='p4') return !!(d.solName || (d.ideas||[]).some(function(x){return x;}));
+  if(pid==='p5') return !!(d.count||d.link);
+  if(pid==='p6') return !!(d.type||d.shows);
+  if(pid==='p7') return !!(d.problem||d.solution);
+  return false;
+}
+function lastMentorFor(team){
+  var v=team.validations||[];
+  if(!v.length) return '—';
+  return mentorDisplayName(v.slice().sort(function(a,b){return b.ts-a.ts;})[0]);
+}
+function pill(cls,text){ return '<span class="pill '+cls+'">'+text+'</span>'; }
+function cellFor(team,key){
+  var d=team.postas;
+  if(key==='mission') return team.mission?esc(team.mission.name):pill('no','Sin girar');
+  if(key==='problem') return d.p1.status==='completed'?pill('ok','Listo'):(d.p1.status==='pending_validation'?pill('alert','Esperando mentor'):(d.p1.status==='current'?pill('mid','En curso'):pill('no','—')));
+  if(key==='val1'){ if(d.p2.status==='completed') return pill('ok','Validado'); if(d.p2.status==='pending_validation') return pill('alert','Esperando mentor'); var c=parseInt(d.p2.count||0,10)||0; if(c>0) return pill('mid',c+'/15'); return d.p2.status==='current'?pill('mid','En curso'):pill('no','—'); }
+  if(key==='count1') return d.p2.count || '—';
+  if(key==='challenge'){ if(d.p3.status==='completed') return pill('ok','Aprobado'); if(d.p3.status==='pending_validation') return pill('alert','Esperando mentor'); return d.p3.status==='current'?pill('mid','En curso'):pill('no','—'); }
+  if(key==='solution'){ if(d.p4.status==='completed') return pill('ok','Listo'); if(d.p4.status==='pending_validation') return pill('alert','Esperando mentor'); return d.p4.status==='current'?pill('mid','En curso'):pill('no','—'); }
+  if(key==='val2'){ if(d.p5.status==='completed') return pill('ok','Validado'); if(d.p5.status==='pending_validation') return pill('alert','Esperando mentor'); var c2=parseInt(d.p5.count||0,10)||0; if(c2>0) return pill('mid',c2+'/15'); return d.p5.status==='current'?pill('mid','En curso'):pill('no','—'); }
+  if(key==='count2') return d.p5.count || '—';
+  if(key==='prototype'){ if(d.p6.status==='completed') return pill('ok','Listo'); if(d.p6.status==='pending_validation') return pill('alert','Esperando mentor'); return d.p6.status==='current'?pill('mid','En curso'):pill('no','—'); }
+  if(key==='pitch'){ if(d.p7.status==='completed') return pill('ok','Listo'); if(d.p7.status==='pending_validation') return pill('alert','Esperando mentor'); return d.p7.status==='current'?pill('mid','En curso'):pill('no','—'); }
+  return '';
+}
+function isWaiting(team){ return POSTAS.some(function(p){ return team.postas[p.id].status==='pending_validation'; }); }
+
+var STALL_MINUTES = 15;
+function minutesAgo(ts){ if(!ts) return null; return Math.floor((Date.now()-ts)/60000); }
+function formatMinutes(mins){
+  if(mins===null||mins===undefined) return '—';
+  if(mins<1) return 'recién';
+  if(mins<60) return mins+' min';
+  var h=Math.floor(mins/60), m=mins%60;
+  return h+'h '+m+'min';
+}
+function formatTimestamp(ts){
+  if(!ts) return '—';
+  var d=new Date(ts);
+  var timeStr=d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+  return timeStr+' · hace '+formatMinutes(minutesAgo(ts));
+}
+function hasActivity(team){ return !!team.lastActivityAt; }
+function pendingPostas(team){ return POSTAS.filter(function(p){ return team.postas[p.id].status!=='completed'; }).map(function(p){ return 'P'+p.num; }); }
+function completedPostas(team){ return POSTAS.filter(function(p){ return team.postas[p.id].status==='completed'; }).map(function(p){ return 'P'+p.num; }); }
+
+/* Single source of truth for "estado actual" — used identically by the
+   private panel and the public board so they can never contradict each other. */
+function estadoActual(team){
+  if(!team.mission) return {key:'sin_iniciar', label:'Sin misión / Sin iniciar', icon:'⚪'};
+  if(countCompleted(team)===7) return {key:'finalizado', label:'Finalizado', icon:'🏁'};
+  var cur=currentPostaId(team);
+  if(team.pendingRework && team.pendingRework.postaId===cur) return {key:'reformulando', label:'Reformulando', icon:'🔄'};
+  if(team.postas[cur].status==='pending_validation') return {key:'esperando', label:'Esperando mentor', icon:'🟠'};
+  return {key:'proceso', label:'En proceso', icon:'🔵'};
+}
+function estadoPillClass(key){
+  if(key==='finalizado') return 'ok';
+  if(key==='esperando') return 'esperando';
+  if(key==='reformulando') return 'alert';
+  if(key==='proceso') return 'proceso';
+  return 'no';
+}
+/* Separate from "estado actual": the outcome of the team's most recent
+   validation checkpoint (independent of what they're doing right now). */
+function ultimaValidacion(team){
+  if(team.pendingRework){ return {key:'requiere', label:'Requiere reformulación', mentor:null, obs:null, when:null}; }
+  var recs=(team.validations||[]).slice().sort(function(a,b){return b.ts-a.ts;});
+  if(!recs.length) return {key:'sin', label:'Sin validación', mentor:null, obs:null, when:null};
+  var v=recs[0];
+  var label = v.verdict==='ajustar' ? 'Aprobada con ajustes' : 'Aprobada';
+  return {key: v.verdict==='ajustar'?'ajustes':'aprobada', label:label, mentor:mentorDisplayName(v), obs:v.observation, when:v.date+' · '+v.time};
+}
+function timeInCurrentPosta(team){
+  var cur=currentPostaId(team);
+  if(!cur) return null;
+  return minutesAgo(team.postas[cur].enteredAt);
+}
+function attentionItems(teams){
+  var items=[];
+  teams.forEach(function(t){
+    if(!t.mission) return;
+    var finished = countCompleted(t)===7;
+    if(finished) return;
+    if(isWaiting(t)){
+      items.push({priority:1, team:t, text:t.label+' — esperando mentor hace '+formatMinutes(minutesAgo(t.lastActivityAt))});
+      return;
+    }
+    if(!hasActivity(t)){
+      items.push({priority:2, team:t, text:t.label+' — sin actividad registrada'});
+      return;
+    }
+    var idle=minutesAgo(t.lastActivityAt);
+    if(idle!==null && idle>=STALL_MINUTES){
+      items.push({priority:3, team:t, text:t.label+' — sin actividad hace '+formatMinutes(idle)});
+    }
+  });
+  items.sort(function(a,b){return a.priority-b.priority;});
+  return items;
+}
+function secondaryCounts(teams){
+  return {
+    reformulando: teams.filter(function(t){ return t.mission && estadoActual(t).key==='reformulando'; }).length,
+    porFinalizar: teams.filter(function(t){ return countCompleted(t)>=6 && countCompleted(t)<7; }).length
+  };
+}
+
+function setAdminFilter(key,val){ state.adminFilters[key]=val; render(); }
+
+function renderAttentionBanner(teams){
+  var items = attentionItems(teams);
+  if(!items.length){
+    return '<div class="info-box" style="font-weight:700;">✅ Todo en orden — ningún equipo requiere atención inmediata.</div>';
+  }
+  return '<div class="attention-banner">' +
+    '<div class="attention-title">⚠️ REQUIEREN ATENCIÓN AHORA</div>' +
+    items.map(function(it){
+      return '<button class="attention-item" data-detail="'+it.team.id+'">'+esc(it.text)+'</button>';
+    }).join('') +
+  '</div>';
+}
+function renderSecondaryChips(teams){
+  var c = secondaryCounts(teams);
+  if(!c.reformulando && !c.porFinalizar) return '';
+  var chips=[];
+  if(c.reformulando) chips.push('<button class="chip chip-warn" data-action="filterEstado" data-estado-key="reformulando">🔄 Reformulando ('+c.reformulando+')</button>');
+  if(c.porFinalizar) chips.push('<button class="chip chip-ok" data-action="filterEstado" data-estado-key="finalizado_soon">🏁 Próximos a finalizar ('+c.porFinalizar+')</button>');
+  return '<div class="chips-row">'+chips.join('')+'</div>';
+}
+
+function renderAdmin(){
+  var teams = TEAM_IDS.map(loadTeam);
+  var f = state.adminFilters;
+  var filtered = teams.filter(function(t){
+    if(f.team && t.id!==f.team) return false;
+    if(f.mission && (!t.mission || t.mission.id!==f.mission)) return false;
+    if(f.status){
+      if(f.status==='finalizado_soon'){ if(!(countCompleted(t)>=6 && countCompleted(t)<7)) return false; }
+      else if(estadoActual(t).key!==f.status) return false;
+    }
+    if(f.mentor && lastMentorFor(t)!==mentorNameById(f.mentor)) return false;
+    return true;
+  });
+  var avgPct=Math.round(teams.reduce(function(s,t){return s+Math.round((countCompleted(t)/7)*100);},0)/teams.length);
+  var esperandoCount=teams.filter(isWaiting).length;
+  var finished=teams.filter(function(t){return t.postas.p7.status==='completed';}).length;
+  var activos=teams.filter(hasActivity).length;
+
+  var tabsHtml='<div class="tabs">' +
+    '<button class="tab '+(state.adminTab==='resumen'?'active':'')+'" data-admintab="resumen">Resumen de equipos</button>' +
+    '<button class="tab '+(state.adminTab==='mentores'?'active':'')+'" data-admintab="mentores">Gestión de mentores</button>' +
+    '<button class="tab '+(state.adminTab==='actividad'?'active':'')+'" data-admintab="actividad">Actividad de mentores</button>' +
+  '</div>';
+
+  var body='';
+  if(state.adminTab==='mentores') body = renderMentorsAdmin();
+  else if(state.adminTab==='actividad') body = renderMentorActivity(teams);
+  else {
+    var missionOptions = MISSIONS.map(function(m){ return '<option value="'+m.id+'">'+esc(m.name)+'</option>'; }).join('');
+    var teamOptions = TEAM_IDS.map(function(id){ return '<option value="'+id+'">'+teamLabel(id)+'</option>'; }).join('');
+    var mentorOptions = loadMentors().map(function(m){ return '<option value="'+m.id+'">'+esc(m.name)+'</option>'; }).join('');
+    var statusOptions = [
+      {k:'sin_iniciar', t:'Sin iniciar'}, {k:'proceso', t:'En proceso'}, {k:'esperando', t:'Esperando mentor'},
+      {k:'reformulando', t:'Reformulando'}, {k:'finalizado', t:'Finalizado'}
+    ].map(function(s){ return '<option value="'+s.k+'" '+(f.status===s.k?'selected':'')+'>'+s.t+'</option>'; }).join('');
+    var rows = filtered.map(function(t){
+      var cur=currentPostaId(t); var curLabel = cur ? ('P'+POSTA_BY_ID[cur].num+' — '+POSTA_BY_ID[cur].title) : '—';
+      var estado=estadoActual(t);
+      return '<tr data-detail="'+t.id+'">' +
+        '<td><b>'+t.label+'</b></td>' +
+        '<td>'+cellFor(t,'mission')+'</td>' +
+        '<td>'+curLabel+'</td>' +
+        '<td>'+Math.round((countCompleted(t)/7)*100)+'%</td>' +
+        '<td>'+pill(estadoPillClass(estado.key), estado.icon+' '+estado.label)+'</td>' +
+        '<td>'+formatTimestamp(t.lastActivityAt)+'</td>' +
+        '<td>'+formatMinutes(timeInCurrentPosta(t))+'</td>' +
+      '</tr>';
+    }).join('');
+    body = '<div class="kpis">' +
+      '<div class="kpi"><b>'+activos+'/7</b><span>Equipos activos</span></div>' +
+      '<div class="kpi"><b>'+esperandoCount+'</b><span>Esperando mentor</span></div>' +
+      '<div class="kpi"><b>'+finished+'/7</b><span>Finalizados</span></div>' +
+      '<div class="kpi"><b>'+avgPct+'%</b><span>Avance promedio</span></div>' +
+    '</div>' +
+    renderAttentionBanner(teams) +
+    renderSecondaryChips(teams) +
+    '<div class="filters">' +
+      '<select data-filter="team"><option value="">Todos los grupos</option>'+teamOptions+'</select>' +
+      '<select data-filter="mission"><option value="">Todas las misiones</option>'+missionOptions+'</select>' +
+      '<select data-filter="status"><option value="">Todos los estados</option>'+statusOptions+'</select>' +
+      '<select data-filter="mentor"><option value="">Todos los mentores</option>'+mentorOptions+'</select>' +
+    '</div>' +
+    '<div class="admin-table-wrap"><table>' +
+      '<thead><tr><th>Grupo</th><th>Misión</th><th>Posta actual</th><th>%</th><th>Estado</th><th>Última actividad</th><th>Tiempo en posta</th></tr></thead>' +
+      '<tbody>'+rows+'</tbody>' +
+    '</table></div>';
+  }
+
+  var modal='';
+  if(state.adminDetail) modal = renderAdminDetailModal(loadTeam(state.adminDetail));
+
+  return '<div class="screen wide">' +
+    '<a href="#" class="backlink" data-nav="welcome">← Volver</a>' +
+    '<h2>Panel de organización — RUTA IDEATHON</h2>' +
+    '<p style="opacity:.7;font-size:.9rem;">Vista administrativa. <a href="#" data-nav="public" style="color:var(--brand-primary);font-weight:600;">Abrir panel público (para proyectar) →</a></p>' +
+    tabsHtml + body +
+  '</div>' + modal;
+}
+function mentorNameById(id){ var m=loadMentors().filter(function(x){return x.id===id;})[0]; return m?m.name:''; }
+function filterEstado(key){ state.adminFilters.status = key; render(); }
+
+function estadoPillForMentor(m){
+  var cls = m.estado==='disponible' ? 'ok' : (m.estado==='ocupado' ? 'esperando' : (m.estado==='no_disponible' ? 'mid' : 'no'));
+  return pill(cls, mentorEstadoLabel(m.estado));
+}
+function renderMentorRow(m){
+  if(state.confirmDeleteMentorId===m.id){
+    return '<div class="mentor-row-v2" style="border-color:var(--warning);">' +
+      '<p style="font-size:.85rem;flex:1;">¿Eliminar a <b>'+esc(mentorFullName(m))+'</b>? Las validaciones que ya hizo quedan en el historial, pero dejará de aparecer en los desplegables.</p>' +
+      '<div class="mentor-actions">' +
+        '<button class="btn small" style="background:var(--warning);box-shadow:none;" data-action="confirmDeleteMentor" data-mentor-id="'+m.id+'">SÍ, ELIMINAR</button>' +
+        '<button class="btn small ghost" data-action="cancelDeleteMentor">CANCELAR</button>' +
+      '</div></div>';
+  }
+  if(state.editingMentorId===m.id){
+    return '<div class="mentor-row-v2 mentor-edit">' +
+      '<div class="mentor-edit-grid">' +
+        '<div><label for="editNombre">Nombre</label><input type="text" id="editNombre" value="'+esc(m.nombre)+'"></div>' +
+        '<div><label for="editApellido">Apellido</label><input type="text" id="editApellido" value="'+esc(m.apellido)+'"></div>' +
+        '<div><label for="editOrg">Institución / Empresa</label><input type="text" id="editOrg" value="'+esc(m.org)+'"></div>' +
+        '<div><label for="editSpec">Especialidad / Perfil</label><input type="text" id="editSpec" value="'+esc(m.specialty)+'"></div>' +
+        '<div><label for="editEstado">Estado</label><select id="editEstado">'+MENTOR_ESTADOS.map(function(e){return '<option value="'+e.k+'" '+(m.estado===e.k?'selected':'')+'>'+e.t+'</option>';}).join('')+'</select></div>' +
+      '</div>' +
+      '<div class="mentor-actions">' +
+        '<button class="btn small" data-action="saveMentorEdit" data-mentor-id="'+m.id+'">GUARDAR</button>' +
+        '<button class="btn small ghost" data-action="cancelMentorEdit">CANCELAR</button>' +
+      '</div></div>';
+  }
+  var extra=[m.specialty,m.org].filter(Boolean).join(' · ');
+  return '<div class="mentor-row-v2">' +
+    '<div class="mentor-info"><b>'+esc(mentorFullName(m))+'</b>'+(extra?'<small>'+esc(extra)+'</small>':'')+'</div>' +
+    estadoPillForMentor(m) +
+    '<div class="mentor-actions">' +
+      '<button class="btn small ghost" data-action="editMentor" data-mentor-id="'+m.id+'">Editar</button>' +
+      '<button class="btn small ghost" style="color:var(--warning);border-color:var(--warning);" data-action="askDeleteMentor" data-mentor-id="'+m.id+'">Eliminar</button>' +
+    '</div></div>';
+}
+function renderMentorsAdmin(){
+  var mentors=loadMentors();
+  var rows=mentors.map(renderMentorRow).join('');
+  var addForm = !state.showAddMentorForm ? '' : (
+    '<div class="mentor-edit-grid" style="margin-top:12px;">' +
+      '<div><label for="newMentorNombre">Nombre</label><input type="text" id="newMentorNombre" placeholder="Nombre"></div>' +
+      '<div><label for="newMentorApellido">Apellido</label><input type="text" id="newMentorApellido" placeholder="Apellido"></div>' +
+      '<div><label for="newMentorOrg">Institución / Empresa</label><input type="text" id="newMentorOrg"></div>' +
+      '<div><label for="newMentorSpec">Especialidad / Perfil</label><input type="text" id="newMentorSpec"></div>' +
+    '</div>' +
+    '<div class="footer-actions"><button class="btn small" data-action="addMentor">GUARDAR MENTOR</button><button class="btn small ghost" data-action="cancelAddMentor">CANCELAR</button></div>'
+  );
+  return '<div class="card">' +
+      '<b style="font-size:.8rem;text-transform:uppercase;opacity:.6;">PIN de acceso a este panel</b>' +
+      '<label for="orgPinConfig">PIN actual: '+esc(loadOrgPin())+'</label>' +
+      '<input type="text" id="orgPinConfig" placeholder="Nuevo PIN" inputmode="numeric">' +
+      '<div class="footer-actions"><button class="btn small" data-action="saveOrgPinConfig">GUARDAR PIN</button></div>' +
+    '</div>' +
+    '<div class="card">' +
+      '<b style="font-size:.8rem;text-transform:uppercase;opacity:.6;">Gestión de mentores ('+mentors.length+')</b>' +
+      rows +
+      (state.showAddMentorForm ? addForm : '<div class="footer-actions" style="margin-top:12px;"><button class="btn" data-action="openAddMentorForm">+ AGREGAR MENTOR</button></div>') +
+    '</div>' +
+    renderResetZone();
+}
+function openAddMentorForm(){ state.showAddMentorForm=true; render(); }
+function cancelAddMentor(){ state.showAddMentorForm=false; render(); }
+function addMentor(){
+  var nombre=getVal('newMentorNombre','').trim();
+  var apellido=getVal('newMentorApellido','').trim();
+  if(!nombre && !apellido) return;
+  var org=getVal('newMentorOrg','').trim();
+  var spec=getVal('newMentorSpec','').trim();
+  var mentors=loadMentors();
+  mentors.push(normalizeMentor({id:'me'+Date.now(), nombre:nombre, apellido:apellido, specialty:spec, org:org, estado:'disponible'}));
+  saveMentors(mentors);
+  state.showAddMentorForm=false;
+  render();
+}
+function editMentor(id){ state.editingMentorId=id; state.confirmDeleteMentorId=null; render(); }
+function cancelMentorEdit(){ state.editingMentorId=null; render(); }
+function saveMentorEdit(id){
+  var mentors=loadMentors();
+  mentors = mentors.map(function(m){
+    if(m.id!==id) return m;
+    m.nombre = getVal('editNombre', m.nombre);
+    m.apellido = getVal('editApellido', m.apellido);
+    m.org = getVal('editOrg', m.org);
+    m.specialty = getVal('editSpec', m.specialty);
+    m.estado = getVal('editEstado', m.estado);
+    return normalizeMentor(m);
+  });
+  saveMentors(mentors);
+  state.editingMentorId=null;
+  render();
+}
+function askDeleteMentor(id){ state.confirmDeleteMentorId=id; state.editingMentorId=null; render(); }
+function cancelDeleteMentor(){ state.confirmDeleteMentorId=null; render(); }
+function confirmDeleteMentor(id){
+  var mentors=loadMentors().filter(function(m){ return m.id!==id; });
+  saveMentors(mentors);
+  state.confirmDeleteMentorId=null;
+  render();
+}
+
+
+function renderResetZone(){
+  if(state.showResetConfirm){
+    return '<div class="card" style="border-color:var(--warning);">' +
+      '<b style="font-size:.8rem;text-transform:uppercase;color:var(--warning);">¿Reiniciar los 7 equipos?</b>' +
+      '<p style="font-size:.85rem;opacity:.8;margin:8px 0;">Esto borra todo el avance, misiones asignadas y validaciones de los 7 grupos, para empezar la jornada desde cero. Los mentores y el PIN de acceso NO se borran. Esta acción no se puede deshacer.</p>' +
+      '<div class="footer-actions">' +
+        '<button class="btn" style="background:var(--warning); box-shadow:none;" data-action="confirmResetAll">SÍ, REINICIAR TODO</button>' +
+        '<button class="btn ghost" data-action="cancelResetAll">CANCELAR</button>' +
+      '</div>' +
+    '</div>';
+  }
+  return '<div class="card">' +
+    '<b style="font-size:.8rem;text-transform:uppercase;opacity:.6;">Zona de reinicio</b>' +
+    '<p style="font-size:.85rem;opacity:.7;margin:8px 0;">Para volver a empezar una jornada (por ejemplo, después de una prueba), esto borra el progreso de los 7 equipos y libera las 7 misiones para que puedan girarse de nuevo. Mentores y PIN se conservan.</p>' +
+    '<div class="footer-actions"><button class="btn ghost" style="border-color:var(--warning); color:var(--warning);" data-action="askResetAll">REINICIAR TODOS LOS EQUIPOS</button></div>' +
+  '</div>';
+}
+function askResetAll(){ state.showResetConfirm=true; render(); }
+function cancelResetAll(){ state.showResetConfirm=false; render(); }
+function confirmResetAll(){
+  TEAM_IDS.forEach(function(id){ safeRemove(STORAGE_PREFIX+id); });
+  safeRemove(MISSIONS_TAKEN_KEY);
+  state.showResetConfirm=false;
+  state.adminDetail=null;
+  render();
+}
+function saveOrgPinConfig(){
+  var val=getVal('orgPinConfig','').trim();
+  if(!val) return;
+  saveOrgPin(val); render();
+}
+
+function renderMentorActivity(teams){
+  var mentors=loadMentors();
+  var allValidations=[];
+  teams.forEach(function(t){ (t.validations||[]).forEach(function(v){ allValidations.push(v); }); });
+
+  var cards = mentors.map(function(m){
+    var mine = allValidations.filter(function(v){ return v.mentorId===m.id; });
+    var grupos = mine.reduce(function(acc,v){ if(acc.indexOf(v.teamLabel)===-1) acc.push(v.teamLabel); return acc; }, []);
+    var lastTs = mine.length ? Math.max.apply(null, mine.map(function(v){return v.ts;})) : null;
+    var extra=[m.specialty,m.org].filter(Boolean).join(' · ');
+    return '<div class="card" style="margin-bottom:10px;">' +
+      '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">' +
+        '<div><b>'+esc(mentorFullName(m))+'</b>'+(extra?'<div style="font-size:.78rem;opacity:.65;">'+esc(extra)+'</div>':'')+'</div>' +
+        estadoPillForMentor(m) +
+      '</div>' +
+      '<div style="display:flex; gap:22px; flex-wrap:wrap; margin-top:12px; font-size:.85rem;">' +
+        '<div><b style="font-family:var(--font-display);font-size:1.2rem;">'+mine.length+'</b><br><span style="opacity:.65;font-size:.75rem;">postas validadas</span></div>' +
+        '<div><b style="font-family:var(--font-display);font-size:1.2rem;">'+grupos.length+'</b><br><span style="opacity:.65;font-size:.75rem;">grupos distintos</span></div>' +
+        '<div><b style="font-family:var(--font-display);font-size:1.2rem;">'+formatTimestamp(lastTs)+'</b><br><span style="opacity:.65;font-size:.75rem;">última actividad</span></div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  var f=state.activityFilters;
+  var filtered = allValidations.filter(function(v){
+    if(f.mentor && v.mentorId!==f.mentor) return false;
+    if(f.team && v.team!==f.team) return false;
+    if(f.posta && v.postaId!==f.posta) return false;
+    return true;
+  }).sort(function(a,b){ return b.ts-a.ts; });
+
+  var mentorOpts = mentors.map(function(m){ return '<option value="'+m.id+'" '+(f.mentor===m.id?'selected':'')+'>'+esc(mentorFullName(m))+'</option>'; }).join('');
+  var teamOpts = TEAM_IDS.map(function(id){ return '<option value="'+id+'" '+(f.team===id?'selected':'')+'>'+teamLabel(id)+'</option>'; }).join('');
+  var postaOpts = POSTAS.map(function(p){ return '<option value="'+p.id+'" '+(f.posta===p.id?'selected':'')+'>'+p.title+'</option>'; }).join('');
+
+  var logRows = filtered.map(function(v){
+    var resLabel = v.verdict==='ajustar' ? 'Aprobada con ajustes' : 'Aprobada';
+    return '<tr><td>'+esc(mentorDisplayName(v))+'</td><td>'+esc(v.teamLabel)+'</td><td>'+esc(v.mission||'—')+'</td><td>'+esc(v.postaTitle)+'</td><td>'+resLabel+'</td>' +
+      '<td style="white-space:normal;font-size:.78rem;max-width:220px;">'+(v.observation?esc(v.observation):'—')+'</td><td>'+v.date+' · '+v.time+'</td></tr>';
+  }).join('');
+
+  return '<p style="opacity:.7;font-size:.85rem;">Mentorías registradas — uso interno del equipo organizador.</p>' +
+    cards +
+    '<div class="filters" style="margin-top:20px;">' +
+      '<select data-activity-filter="mentor"><option value="">Todos los mentores</option>'+mentorOpts+'</select>' +
+      '<select data-activity-filter="team"><option value="">Todos los grupos</option>'+teamOpts+'</select>' +
+      '<select data-activity-filter="posta"><option value="">Todas las postas</option>'+postaOpts+'</select>' +
+    '</div>' +
+    '<div class="admin-table-wrap"><table>' +
+      '<thead><tr><th>Mentor</th><th>Grupo</th><th>Misión</th><th>Posta</th><th>Resultado</th><th>Observación</th><th>Fecha/hora</th></tr></thead>' +
+      '<tbody>'+(logRows||'<tr><td colspan="7" style="opacity:.6;">Todavía no hay validaciones registradas.</td></tr>')+'</tbody>' +
+    '</table></div>';
+}
+function setActivityFilter(key,val){ state.activityFilters[key]=val; render(); }
+
+
+function openAdminDetail(id){ state.adminDetail=id; render(); }
+function closeAdminDetail(){ state.adminDetail=null; render(); }
+function renderAdminDetailModal(t){
+  var lines=POSTAS.map(function(p){
+    var st=t.postas[p.id].status;
+    var icon = st==='completed'?'✅':(st==='pending_validation'?'🟠':(st==='current'?'🔵':'🔒'));
+    var reopenBtn = st==='completed' ? '<button class="btn small ghost" data-reopen="'+t.id+'|'+p.id+'">Reabrir</button>' : '';
+    return '<div class="stat-line reopen-row"><div><span class="badge">'+icon+'</span> '+p.title+' — '+postaStatusLabel(st)+'</div>'+reopenBtn+'</div>';
+  }).join('');
+  var history=(t.validations||[]).slice().sort(function(a,b){return a.ts-b.ts;}).map(function(v){
+    var vLabel = v.verdict==='ajustar' ? ' (con ajustes)' : '';
+    return '<div class="history-item">'+esc(v.postaTitle)+' — Validada'+vLabel+' por '+esc(mentorDisplayName(v))+'<small>'+v.date+' · '+v.time+(v.observation?' · "'+esc(v.observation)+'"':'')+'</small></div>';
+  });
+  var estado=estadoActual(t);
+  var uv=ultimaValidacion(t);
+  var uvLine = '<b>Última validación:</b> '+uv.label + (uv.mentor ? ' — '+esc(uv.mentor)+(uv.when?' · '+uv.when:'') : '') + (uv.obs ? '<br><span style="opacity:.75;">"'+esc(uv.obs)+'"</span>' : '');
+  return '<div class="modal-overlay" data-close-admin="1"><div class="modal">' +
+    '<h3>'+t.label+'</h3>' +
+    '<p style="opacity:.7;font-size:.85rem;">Misión: '+(t.mission?esc(t.mission.name):'Sin asignar')+' · Estado actual: '+estado.icon+' '+estado.label+'</p>' +
+    '<div class="card" style="font-size:.85rem;">'+uvLine+'</div>' +
+    '<div class="card" style="font-size:.82rem;">' +
+      '<b>Completadas:</b> '+(completedPostas(t).length?completedPostas(t).join(', '):'ninguna todavía')+'<br>' +
+      '<b>Pendientes:</b> '+(pendingPostas(t).length?pendingPostas(t).join(', '):'ninguna')+'<br>' +
+      '<b>Última actividad:</b> '+formatTimestamp(t.lastActivityAt)+'<br>' +
+      '<b>Tiempo en posta actual:</b> '+formatMinutes(timeInCurrentPosta(t)) +
+    '</div>' +
+    '<div class="card">'+lines+'</div>' +
+    '<div class="card" style="font-size:.85rem;">' +
+      '<b>Problema:</b> '+esc(t.postas.p1.problem||'—')+'<br><br>' +
+      '<b>Desafío:</b> '+esc(t.postas.p3.challenge||'—')+'<br><br>' +
+      '<b>Solución:</b> '+esc(t.postas.p4.solName||'—') +
+    '</div>' +
+    '<div class="card"><b style="font-size:.75rem;text-transform:uppercase;opacity:.6;">Historial de validaciones</b>' +
+      (history.length ? history.join('') : '<div class="history-item" style="opacity:.6;">Todavía no hay postas validadas.</div>') +
+    '</div>' +
+    '<div class="footer-actions"><button class="btn ghost" data-action="closeAdminDetail">CERRAR</button></div>' +
+  '</div></div>';
+}
+function reopenPosta(teamId,postaId){
+  var team=loadTeam(teamId); var idx=POSTA_INDEX[postaId];
+  POSTAS.forEach(function(p,i){
+    if(i===idx) activatePosta(team,p.id);
+    else if(i>idx) team.postas[p.id].status='locked';
+  });
+  team.validations=(team.validations||[]).filter(function(v){ return POSTA_INDEX[v.postaId] < idx; });
+  team.pendingRework=null;
+  saveTeam(team); render();
+}
+
+/* ---------- PUBLIC RACE PANEL ---------- */
+function laneNodes(team){
+  var cur = currentPostaId(team);
+  var nodes = [];
+  nodes.push({label:'🏁', state: team.mission ? 'done' : 'pending'});
+  POSTAS.forEach(function(p){
+    var st=team.postas[p.id].status; var s;
+    if(st==='completed') s='done';
+    else if(p.id===cur) s = (st==='pending_validation') ? 'waiting' : 'current';
+    else s='pending';
+    nodes.push({label:String(p.num), state:s});
+  });
+  nodes.push({label:'🏆', state: cur ? 'pending' : 'done'});
+  return nodes;
+}
+function renderPublic(){
+  var teams = TEAM_IDS.map(loadTeam);
+  var rows = teams.map(function(t){
+    var completed=countCompleted(t); var pct=Math.round((completed/7)*100);
+    var cur=currentPostaId(t);
+    var curLabel = cur ? ('P'+POSTA_BY_ID[cur].num+' · '+POSTA_BY_ID[cur].title) : 'Completo';
+    var nodes = laneNodes(t);
+    var estado = estadoActual(t);
+    var track = nodes.map(function(n,i){
+      var connector = i>0 ? '<div class="lm-connector '+((nodes[i-1].state==='done')?'done':'')+'"></div>' : '';
+      return connector + '<div class="lm-node '+n.state+'">'+n.label+'</div>';
+    }).join('');
+    return '<div class="lm-row '+(estado.key==='finalizado'?'lm-finished':'')+'">' +
+      '<div class="lm-group">'+t.label+'</div>' +
+      '<div class="lm-mission">'+(t.mission?(t.mission.icon+' '+esc(t.mission.name)):'Sin misión')+'</div>' +
+      '<div class="lm-track">'+track+'</div>' +
+      '<div class="lm-current">'+esc(curLabel)+'</div>' +
+      '<div class="lm-pct">'+pct+'%</div>' +
+      '<div class="lm-estado lm-estado-'+estado.key+'">'+estado.icon+' '+estado.label+'</div>' +
+    '</div>';
+  }).join('');
+  return '<div class="public-fullscreen">' +
+    '<div class="public-topbar">' +
+      '<button class="btn secondary small" data-nav="welcome">← VOLVER / INICIO</button>' +
+      (LOGO_FULL_B64 ? '<img src="data:image/png;base64,'+LOGO_FULL_B64+'" alt="+I" class="public-logo">' : '') +
+    '</div>' +
+    '<h1 class="public-title-compact">RUTA IDEATHON 2026 – PROGRESO EN VIVO</h1>' +
+    '<p class="public-sub-compact">7 grupos · 7 misiones · una meta</p>' +
+    '<div class="lm-header-row">' +
+      '<div>Grupo</div><div>Misión</div><div>Ruta P1–P7</div><div>Posta actual</div><div>%</div><div>Estado</div>' +
+    '</div>' +
+    '<div class="lm-list">'+rows+'</div>' +
+    '<div class="public-legend-compact">' +
+      '<span>✅ Posta completada</span><span>🔵 En proceso</span><span>🟠 Esperando mentor</span>' +
+      '<span>🔄 Reformulando</span><span>⚪ Sin misión / sin iniciar</span><span>🏁 Finalizado</span>' +
+    '</div>' +
+  '</div>';
+}
+
+/* ---------- EVENTS ---------- */
+function afterRender(){
+  var app=document.getElementById('app');
+  app.onclick=function(e){
+    var el;
+    el=e.target.closest('[data-nav]'); if(el){ e.preventDefault(); go(el.getAttribute('data-nav')); return; }
+    el=e.target.closest('[data-team]'); if(el){ state.teamId=el.getAttribute('data-team'); var t=loadTeam(state.teamId); go(t.mission?'map':'wheel'); return; }
+    el=e.target.closest('#spinBtn'); if(el && !el.disabled){ spinWheel(); return; }
+    el=e.target.closest('[data-action="acceptMission"]'); if(el){ acceptMission(); return; }
+    el=e.target.closest('[data-tab]'); if(el){ state.tab=el.getAttribute('data-tab'); render(); return; }
+    el=e.target.closest('[data-admintab]'); if(el){ state.adminTab=el.getAttribute('data-admintab'); state.editingMentorId=null; state.confirmDeleteMentorId=null; state.showAddMentorForm=false; render(); return; }
+    el=e.target.closest('[data-posta]'); if(el){ openPosta(el.getAttribute('data-posta')); return; }
+    el=e.target.closest('[data-verdict]'); if(el){ setVerdict(el.getAttribute('data-verdict-for'), el.getAttribute('data-verdict')); return; }
+    el=e.target.closest('[data-action="openForm"]'); if(el && !el.disabled){ openForm(); return; }
+    el=e.target.closest('[data-action="closeGuideForm"]'); if(el){ closeGuideForm(); return; }
+    el=e.target.closest('[data-action="openOrgGate"]'); if(el){ e.preventDefault(); openOrgGate(); return; }
+    el=e.target.closest('[data-action="closeOrgGate"]'); if(el){ closeOrgGate(); return; }
+    el=e.target.closest('[data-action="submitOrgPin"]'); if(el){ submitOrgPin(); return; }
+    el=e.target.closest('[data-action="requestP1"]'); if(el){ requestP1(); return; }
+    el=e.target.closest('[data-action="requestP2"]'); if(el){ requestP2(); return; }
+    el=e.target.closest('[data-action="requestP3"]'); if(el){ requestP3(); return; }
+    el=e.target.closest('[data-action="requestP4"]'); if(el){ requestP4(); return; }
+    el=e.target.closest('[data-action="requestP5"]'); if(el){ requestP5(); return; }
+    el=e.target.closest('[data-action="requestP6"]'); if(el){ requestP6(); return; }
+    el=e.target.closest('[data-action="requestP7"]'); if(el){ requestP7(); return; }
+    el=e.target.closest('[data-action="approvePosta"]'); if(el){ approvePosta(el.getAttribute('data-approve-posta')); return; }
+    el=e.target.closest('[data-action="continueAfterConfirm"]'); if(el){ continueAfterConfirm(); return; }
+    el=e.target.closest('[data-detail]'); if(el){ openAdminDetail(el.getAttribute('data-detail')); return; }
+    el=e.target.closest('[data-action="closeAdminDetail"]'); if(el){ closeAdminDetail(); return; }
+    el=e.target.closest('[data-reopen]'); if(el){ var parts=el.getAttribute('data-reopen').split('|'); reopenPosta(parts[0],parts[1]); return; }
+    el=e.target.closest('[data-action="editMentor"]'); if(el){ editMentor(el.getAttribute('data-mentor-id')); return; }
+    el=e.target.closest('[data-action="cancelMentorEdit"]'); if(el){ cancelMentorEdit(); return; }
+    el=e.target.closest('[data-action="saveMentorEdit"]'); if(el){ saveMentorEdit(el.getAttribute('data-mentor-id')); return; }
+    el=e.target.closest('[data-action="askDeleteMentor"]'); if(el){ askDeleteMentor(el.getAttribute('data-mentor-id')); return; }
+    el=e.target.closest('[data-action="cancelDeleteMentor"]'); if(el){ cancelDeleteMentor(); return; }
+    el=e.target.closest('[data-action="confirmDeleteMentor"]'); if(el){ confirmDeleteMentor(el.getAttribute('data-mentor-id')); return; }
+    el=e.target.closest('[data-action="openAddMentorForm"]'); if(el){ openAddMentorForm(); return; }
+    el=e.target.closest('[data-action="cancelAddMentor"]'); if(el){ cancelAddMentor(); return; }
+    el=e.target.closest('[data-action="addMentor"]'); if(el){ addMentor(); return; }
+    el=e.target.closest('[data-action="saveOrgPinConfig"]'); if(el){ saveOrgPinConfig(); return; }
+    el=e.target.closest('[data-action="askResetAll"]'); if(el){ askResetAll(); return; }
+    el=e.target.closest('[data-action="cancelResetAll"]'); if(el){ cancelResetAll(); return; }
+    el=e.target.closest('[data-action="confirmResetAll"]'); if(el){ confirmResetAll(); return; }
+    el=e.target.closest('[data-action="filterEstado"]'); if(el){ filterEstado(el.getAttribute('data-estado-key')); return; }
+    if(e.target.classList.contains('modal-overlay')){
+      if(e.target.getAttribute('data-close-guide')) closeGuideForm();
+      if(e.target.getAttribute('data-close-admin')) closeAdminDetail();
+      if(e.target.getAttribute('data-close-org')) closeOrgGate();
+    }
+  };
+  app.onchange=function(e){
+    var el=e.target.closest('[data-filter]');
+    if(el){ setAdminFilter(el.getAttribute('data-filter'), el.value); return; }
+    el=e.target.closest('[data-activity-filter]');
+    if(el){ setActivityFilter(el.getAttribute('data-activity-filter'), el.value); return; }
+  };
+  app.oninput=function(e){
+    if(e.target.id==='p2count') updateLiveProgress('p2', e.target.value);
+    if(e.target.id==='p5count') updateLiveProgress('p5', e.target.value);
+  };
+}
+
+/* ---------- INIT / HASH ROUTING (staff access) ---------- */
+var hash = (window.location.hash || '').replace('#','');
+if(hash === 'admin') state.showOrgGate=true;
+else if(hash === 'public') state.screen='public';
+
+render();
+
+/* Live-ish updates: re-render periodically for timers, and react to changes
+   made in other tabs of the same browser (localStorage 'storage' event). */
+setInterval(function(){
+  if(state.screen==='admin' || state.screen==='public'){ render(); }
+}, 5000);
+window.addEventListener('storage', function(e){
+  if(e.key && e.key.indexOf(STORAGE_PREFIX)===0){
+    if(state.screen==='admin' || state.screen==='public'){ render(); }
+  }
+});
+})();
+</script>
+</body>
+</html>

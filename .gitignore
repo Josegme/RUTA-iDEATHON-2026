@@ -1,0 +1,8 @@
+node_modules/
+test/site/
+test/*.png
+test/run.log
+.env
+.env.*
+.vercel/
+.DS_Store
