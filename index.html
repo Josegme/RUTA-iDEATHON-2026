@@ -1285,8 +1285,8 @@ function renderWheel(){
   var noticeHtml = state.notice ? '<div class="notice" style="width:100%;max-width:520px;">'+esc(state.notice)+'</div>' : '';
   var headHtml = gm
     ? '<h2 style="text-align:center;margin:0 0 6px;">¡Bienvenidos, '+teamLabel(gm)+'!</h2>'
-    : '<a href="#" class="backlink" data-nav="welcome" style="align-self:flex-start;">← Volver</a><h2 style="text-align:center;margin:0 0 6px;">Sorteo de misiones</h2>';
-  var drawLeft = gm ? '' : '<div class="stage-left"><button class="btn" data-action="startDraw" '+((!g.turnTeamId && teamsWithoutMission().length>0)?'':'disabled')+'>SORTEAR SIGUIENTE GRUPO</button></div>';
+    : '<a href="#" class="backlink" data-nav="welcome" style="align-self:flex-start;">← Volver</a><h2 style="text-align:center;margin:0 0 6px;">Sorteo</h2>';
+  var drawLeft = gm ? '' : '<div class="stage-left"><button class="btn" data-action="startDraw" '+((!g.turnTeamId && teamsWithoutMission().length>0)?'':'disabled')+'>SORTEAR</button></div>';
   return (gm ? topbar(loadTeam(gm)) : '') + '<div class="stage'+(gm?'':' has-left')+'">' +
     drawLeft +
     '<div class="stage-main">' +
