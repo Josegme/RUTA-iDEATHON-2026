@@ -41,7 +41,7 @@ const wipe = () => fetch(SB + '/rest/v1/kv?key=like.rutaideathon_v3_*', { method
 
   log('\n[2] Sorteo en vivo cruza dispositivos');
   await stage.click('[data-action="startDraw"]');
-  await stage.waitForSelector('.draw-card.is-turn [data-action="confirmStageTeam"]', { timeout: 15000 });
+  await stage.waitForSelector('.draw-card.is-turn', { timeout: 15000 });
   const gO = await ls(org, 'game'), gS = await ls(stage, 'game');
   check(gO.turnTeamId && gO.turnTeamId === gS.turnTeamId, 'Proyector recibió el grupo sorteado: ' + gS.turnTeamId);
   const tid = gO.turnTeamId, code = 'GP0' + tid.replace('g', '');
@@ -51,9 +51,8 @@ const wipe = () => fetch(SB + '/rest/v1/kv?key=like.rutaideathon_v3_*', { method
   await phone.waitForSelector('#groupCode');
   await phone.fill('#groupCode', code);
   await phone.click('[data-action="submitGroupCode"]');
-  await phone.waitForSelector('.draw-card.is-turn [data-action="confirmStageTeam"]', { timeout: 15000 });
+  await phone.waitForSelector('.draw-card.is-turn', { timeout: 15000 });
   check(true, 'Celular nuevo ve el turno sin haber estado abierto antes');
-  await phone.click('[data-action="confirmStageTeam"]');
   await phone.click('#spinBtn');
   const t0 = Date.now();
   await stage.waitForFunction(() => { const w = document.getElementById('wheelEl'); return w && w.dataset.spinning === '1'; }, null, { timeout: 4000 }).catch(() => {});

@@ -57,7 +57,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const g1 = await ls(org, 'game');
   check(!!g1.turnTeamId, 'Grupo sorteado: ' + g1.turnTeamId);
   await stage.waitForSelector('.draw-card.is-turn');
-  check(await stage.locator('.draw-card.is-turn [data-action="confirmStageTeam"]').count() === 1, 'Solo la tarjeta sorteada tiene "Somos este grupo"');
+  check(await stage.locator('.draw-card.is-turn').count() === 1 && await stage.locator('[data-action="confirmStageTeam"]').count() === 0, 'Solo la tarjeta sorteada queda resaltada, sin botón "Somos este grupo"');
   check((await pub.locator('.public-turn').innerText()).includes('Turno de sorteo'), 'Tablero público muestra el turno');
   await org.waitForSelector('[data-action="undoTurn"]');
   await org.click('[data-action="undoTurn"]');
@@ -71,8 +71,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     await stage.waitForSelector('[data-action="startDraw"]:not([disabled])');
     await stage.click('[data-action="startDraw"]');
     await sleep(4500);
-    await stage.waitForSelector('.draw-card.is-turn [data-action="confirmStageTeam"]');
-    check(await stage.locator('#spinBtn').isDisabled(), `T${i + 1}: ruleta bloqueada hasta confirmar grupo`);
+    await stage.waitForSelector('.draw-card.is-turn');
+    check(!(await stage.locator('#spinBtn').isDisabled()), `T${i + 1}: rueda lista para girar apenas se sortea el grupo`);
     if (i === 1) {
       // El líder del grupo sorteado lo hace desde su celular (QR + código)
       const tid = (await ls(org, 'game')).turnTeamId;
@@ -81,10 +81,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       await phone.waitForSelector('#groupCode');
       await phone.fill('#groupCode', code.toLowerCase());
       await phone.click('[data-action="submitGroupCode"]');
-      await phone.waitForSelector('.draw-card.is-turn [data-action="confirmStageTeam"]');
+      await phone.waitForSelector('.draw-card.is-turn');
       check((await phone.locator('#stageStatus').innerText()).includes('Les tocó'), 'Celular del grupo: "¡Les tocó!"');
-      check(await phone.locator('[data-action="confirmStageTeam"]').count() === 1, 'Celular: solo su tarjeta tiene "Somos este grupo"');
-      await phone.click('[data-action="confirmStageTeam"]');
+      check(await phone.locator('[data-action="confirmStageTeam"]').count() === 0, 'Celular: sin botón "Somos este grupo"');
       await phone.click('#spinBtn');
       await sleep(800);
       check(await stage.evaluate(() => document.getElementById('wheelEl').dataset.spinning === '1'), 'Proyector reproduce el giro hecho desde el celular');
@@ -100,8 +99,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       await phone.close();
       continue;
     }
-    await stage.click('.draw-card.is-turn [data-action="confirmStageTeam"]');
-    check(!(await stage.locator('#spinBtn').isDisabled()), `T${i + 1}: ruleta habilitada tras "Somos este grupo"`);
+    check(!(await stage.locator('#spinBtn').isDisabled()), `T${i + 1}: rueda habilitada tras el sorteo`);
     if (i === 0) {
       await stage.click('#spinBtn');
       await sleep(4600);

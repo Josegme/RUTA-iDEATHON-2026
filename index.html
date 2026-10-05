@@ -1187,11 +1187,6 @@ function renderDrawAside(g, interactive, onlyTeam){
     else if(anim){ if(hot===id) cls+=' is-hot'; ord=''; }
     else if(g.turnTeamId===id){
       cls+=' is-turn'; sub='Tiene el turno';
-      if(interactive && (!onlyTeam || onlyTeam===id)){
-        var confirmed = state.stageTeam===id || (g.pendingMission && g.pendingMission.teamId===id);
-        extra = confirmed ? '<div class="dc-sub" style="margin-top:6px;font-weight:700;">✓ Grupo confirmado</div>'
-          : '<button class="btn small" data-action="confirmStageTeam" data-stage-team="'+id+'">SOMOS ESTE GRUPO</button>';
-      }
     }
     return '<div class="'+cls+'" data-dc="'+id+'">' +
       '<div class="dc-top"><span class="dc-name">'+teamLabel(id)+'</span><span class="dc-ord">'+ord+'</span></div>' +
@@ -1211,8 +1206,7 @@ function stageStatus(g){
     if(mt.mission) return {hot:false, text:'¡Listo! Su misión es '+mt.mission.name+'. Ya pueden empezar su ruta.'};
     if(isDrawAnimating(g)) return {hot:true, text:'Sorteando el próximo grupo…'};
     if(g.turnTeamId===gm){
-      var mc = state.stageTeam===gm || (g.pendingMission && g.pendingMission.teamId===gm);
-      return {hot:true, text: mc ? '¡Giren la rueda!' : '¡Les tocó! Toquen «Somos este grupo» en su tarjeta para habilitar el sorteo.'};
+      return {hot:true, text:'¡Les tocó! ¡Giren la rueda!'};
     }
     if(g.turnTeamId) return {hot:false, text:'Turno de '+teamLabel(g.turnTeamId)+'. Esperen el próximo sorteo.'};
     return {hot:false, text:'Están adentro. Esperen a que la organización lance el sorteo.'};
@@ -1238,7 +1232,7 @@ function renderWheel(){
   var anim=isDrawAnimating(g);
   var gm=state.groupMode;
   var turnId = anim ? null : g.turnTeamId;
-  var confirmed = !!turnId && (state.stageTeam===turnId || (g.pendingMission && g.pendingMission.teamId===turnId));
+  var confirmed = !!turnId;
   if(gm && turnId!==gm) confirmed=false;
   /* Si la misión ya se sorteó para este turno (por ejemplo, tras recargar), se muestra directamente. */
   var landed = state.wheelLanded;
