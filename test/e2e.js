@@ -28,10 +28,16 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   // ---------- ORGANIZACIÓN ----------
   log('\n[1] Acceso organización');
+  const home = await open('', 'home');
+  const cards = await home.locator('.access-card').allInnerTexts();
+  check(cards.length === 2 && /Mentores/.test(cards[0]) && /Organización/.test(cards[1]), 'Inicio: accesos de Mentores y Organización en tarjetas grandes');
+  const fs = await home.locator('.access-card').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize));
+  check(fs >= 16, 'Letra de los accesos agrandada (' + fs + 'px)');
+  await home.close();
   const org = await open('#admin', 'org');
   await org.fill('#orgPinInput', '2026');
   await org.click('[data-action="submitOrgPin"]');
-  await org.waitForSelector('[data-action="startDraw"]');
+  await org.waitForSelector('.tab.active');
   check(await org.locator('.tab.active').innerText() === 'Sorteo en vivo', 'Panel abre en "Sorteo en vivo" cuando faltan misiones');
 
   const stage = await open('#ruleta', 'stage');
@@ -41,17 +47,18 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   // ---------- SORTEO + DESHACER ----------
   log('\n[2] Sorteo en vivo, animación y deshacer turno');
-  await org.click('[data-action="startDraw"]');
+  check(await org.locator('[data-action="startDraw"]').count() === 0, 'El panel de organización ya no tiene el botón de sorteo');
+  await stage.click('[data-action="startDraw"]');
   await sleep(900);
   const hotCount = await stage.locator('.draw-card.is-hot').count();
   check(hotCount === 1, 'Durante la animación hay exactamente 1 tarjeta resaltada en el escenario (' + hotCount + ')');
-  check(await org.locator('[data-action="startDraw"]').isDisabled(), 'Botón de sorteo bloqueado durante el turno');
+  check(await stage.locator('[data-action="startDraw"]').isDisabled(), 'Botón de sorteo bloqueado durante el turno');
   await sleep(4000);
   const g1 = await ls(org, 'game');
   check(!!g1.turnTeamId, 'Grupo sorteado: ' + g1.turnTeamId);
   await stage.waitForSelector('.draw-card.is-turn');
   check(await stage.locator('.draw-card.is-turn [data-action="confirmStageTeam"]').count() === 1, 'Solo la tarjeta sorteada tiene "Somos este grupo"');
-  check((await pub.locator('.public-turn').innerText()).includes('Turno de ruleta'), 'Tablero público muestra el turno');
+  check((await pub.locator('.public-turn').innerText()).includes('Turno de sorteo'), 'Tablero público muestra el turno');
   await org.waitForSelector('[data-action="undoTurn"]');
   await org.click('[data-action="undoTurn"]');
   await sleep(300);
@@ -61,8 +68,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   // ---------- 7 TURNOS ----------
   log('\n[3] Siete turnos completos con match grupo+misión');
   for (let i = 0; i < 7; i++) {
-    await org.waitForSelector('[data-action="startDraw"]:not([disabled])');
-    await org.click('[data-action="startDraw"]');
+    await stage.waitForSelector('[data-action="startDraw"]:not([disabled])');
+    await stage.click('[data-action="startDraw"]');
     await sleep(4500);
     await stage.waitForSelector('.draw-card.is-turn [data-action="confirmStageTeam"]');
     check(await stage.locator('#spinBtn').isDisabled(), `T${i + 1}: ruleta bloqueada hasta confirmar grupo`);
@@ -114,7 +121,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const ms = teams.map(t => t && t.mission && t.mission.id);
   check(ms.every(Boolean) && new Set(ms).size === 7, '7 grupos con 7 misiones distintas: ' + ms.join(','));
   check((await stage.locator('#stageStatus').innerText()).includes('Sorteo completo'), 'Escenario indica sorteo completo');
-  await org.waitForSelector('[data-action="startDraw"][disabled]');
+  await stage.waitForSelector('[data-action="startDraw"][disabled]');
   check(true, 'Botón de sorteo deshabilitado al terminar');
   check(await pub.locator('.public-turn').count() === 0, 'Tablero público oculta la línea de turno al terminar');
 
@@ -166,6 +173,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   check(true, 'P1: grupo ve "Esperando a un mentor"');
   await mA.waitForSelector('[data-action="claimRequest"]');
   await mB.waitForSelector('[data-action="claimRequest"]');
+  check((await mB.locator('.req-card').first().innerText()).includes('VALIDACIÓN'), 'La tarjeta del mentor indica que es una VALIDACIÓN');
   check(await mB.locator('#toast:not([hidden])').count() === 1, 'Mentor B recibe la alerta visual de nueva solicitud');
   await mA.click('[data-action="claimRequest"]');
   await mA.waitForSelector('[data-action="approveRequest"]');
@@ -314,6 +322,49 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   check(g1r.postas.p3.status === 'current' && g1r.postas.p4.status === 'locked', 'Reabrir P3 bloquea las siguientes (comportamiento V2)');
   await org.click('[data-action="closeAdminDetail"]');
 
+  // ---------- Consulta a un mentor elegido ----------
+  log('\n[13] Consulta a un mentor elegido');
+  const gc = await open('#grupo', 'gConsult');
+  await gc.waitForSelector('#groupCode');
+  await gc.fill('#groupCode', 'GP02'); await gc.click('[data-action="submitGroupCode"]');
+  await gc.waitForSelector('[data-action="openConsult"]');
+  check(true, 'El grupo ve el botón de consulta en su mapa');
+  check(await gc.locator('[data-action="startDraw"]').count() === 0, 'El celular del grupo no tiene botón de sorteo');
+  await mB.click('[data-mtab="solicitudes"]');
+  await mB.click('[data-action="setMyEstado"][data-estado="no_disponible"]');
+  await gc.click('[data-action="openConsult"]');
+  await gc.waitForSelector('[data-action="callMentor"][data-mentor-id="me1"]');
+  check(await gc.locator('[data-action="callMentor"][data-mentor-id="me2"]').isDisabled(), 'No se puede elegir a un mentor no disponible');
+  check(!(await gc.locator('[data-action="callMentor"][data-mentor-id="me1"]').isDisabled()), 'Sí se puede elegir a un mentor disponible');
+  await gc.click('[data-action="callMentor"][data-mentor-id="me1"]');
+  await gc.waitForSelector('text=Consulta enviada a');
+  check(true, 'El grupo ve "Consulta enviada" al mentor elegido');
+  await mA.click('[data-mtab="solicitudes"]');
+  await mA.waitForSelector('[data-action="claimConsulta"]');
+  check((await mA.locator('.req-card', { has: mA.locator('[data-action="claimConsulta"]') }).innerText()).includes('CONSULTA'), 'El mentor elegido ve la tarjeta marcada como CONSULTA');
+  check(await mB.locator('[data-action="claimConsulta"]').count() === 0, 'Otro mentor no ve la consulta');
+  await mA.click('[data-action="claimConsulta"]');
+  await mA.waitForSelector('[data-action="finishConsulta"]');
+  await gc.waitForSelector('text=aceptó su consulta');
+  check((await ls(org, 'mentors')).find(m => m.id === 'me1').estado === 'ocupado', 'El mentor queda "Ocupado" mientras atiende la consulta');
+  check((await ls(org, 'g2')).postas && true, 'La consulta no cambia el estado de las postas');
+  await mA.click('[data-action="finishConsulta"]');
+  await gc.waitForSelector('[data-action="openConsult"]');
+  check((await ls(org, 'mentors')).find(m => m.id === 'me1').estado === 'disponible', 'Al finalizar, el mentor vuelve a "Disponible"');
+  await gc.click('[data-action="openConsult"]');
+  await gc.click('[data-action="callMentor"][data-mentor-id="me1"]');
+  await gc.click('[data-action="cancelConsult"]');
+  await gc.waitForSelector('[data-action="openConsult"]');
+  check((await ls(org, 'consultas')).slice(-1)[0].status === 'cancelled', 'El grupo puede cancelar una consulta que nadie aceptó');
+  await mB.click('[data-action="setMyEstado"][data-estado="disponible"]');
+
+  log('\n[14] Modo claro fijo (crema) aunque el dispositivo esté en modo oscuro');
+  const dk = await browser.newContext({ colorScheme: 'dark' });
+  const dp = await dk.newPage(); await dp.goto(URL);
+  const bg = await dp.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  check(bg === 'rgb(248, 242, 228)', 'Fondo crema con el dispositivo en modo oscuro (' + bg + ')');
+  await dk.close();
+
   // ---------- Accesos de grupos ----------
   log('\n[12] Accesos: código, cerrar accesos, cambiar código, reiniciar grupo, QR');
   await org.click('[data-admintab="accesos"]');
@@ -343,7 +394,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   check(!!(await ls(org, 'g1')) && !!(await ls(org, 'g1')).mission, 'Los demás grupos no se tocan');
   check((await g3.locator('#stageStatus').innerText()).includes('Esperen'), 'El grupo reiniciado queda esperando el sorteo');
   await org.click('[data-admintab="sorteo"]');
-  check(!(await org.locator('[data-action="startDraw"]').isDisabled()), 'Se puede volver a sortear al grupo reiniciado');
+  check(!(await stage.locator('[data-action="startDraw"]').isDisabled()), 'Se puede volver a sortear al grupo reiniciado');
 
   // ---------- Reinicio ----------
   log('\n[10] Reinicio total');

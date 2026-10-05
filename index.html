@@ -1,3 +1,5 @@
+<meta name="color-scheme" content="only light">
+<meta name="theme-color" content="#F8F2E4">
 <title>RUTA IDEATHON 2026 — V3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,39 +14,18 @@
     --success:#2F8F5C;
     --warning:#C23B3B;
     --ink:#122A33;
-    --paper:#FBFCFC;
-    --paper-2:#EDF2F3;
-    --line:#D2DCDE;
-    --tint-orange:#FFF1E4;
-    --tint-blue:#E4EEF1;
-    --tint-red:#FBEAE3;
-    --tint-green:#DCEFE1;
+    --paper:#F8F2E4;
+    --paper-2:#EFE7D3;
+    --line:#DDD2B9;
+    --tint-orange:#FCEBD5;
+    --tint-blue:#E4EDEB;
+    --tint-red:#F9E6DA;
+    --tint-green:#E0EDD9;
     --radius:14px;
     --font-display:'Space Grotesk',system-ui,-apple-system,sans-serif;
     --font-body:'Work Sans',system-ui,-apple-system,sans-serif;
-    color-scheme: light;
+    color-scheme: only light;
   }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --ink:#F3F1E7; --paper:#0E1712; --paper-2:#152420; --line:#2B3A34;
-      --tint-orange:#2E2015; --tint-blue:#0E2A33; --tint-red:#3A1611; --tint-green:#173028; color-scheme:dark;
-    }
-    :root:not([data-theme="light"]) .stop.current .stop-btn{background:#2E2015;}
-    :root:not([data-theme="light"]) .stop.pending .stop-btn{background:#331612;}
-    :root:not([data-theme="light"]) .warn{background:#3A1611; color:#F2C7B4;}
-    :root:not([data-theme="light"]) .notice{background:#3A2A11; color:#F5D9AE;}
-    :root:not([data-theme="light"]) .info-box{background:#0E2A33; color:#BFE1EA;}
-    :root:not([data-theme="light"]) .choice.selected{background:#0E2A33;}
-    :root:not([data-theme="light"]) .pill.ok{background:#173028;}
-    :root:not([data-theme="light"]) .pill.mid{background:#3A2E11;}
-    :root:not([data-theme="light"]) .pill.alert{background:#3A1E12;}
-    :root:not([data-theme="light"]) .attention-banner{background:#3A1611;}
-    :root:not([data-theme="light"]) .chip-warn{background:#3A1611;}
-    :root:not([data-theme="light"]) .chip-ok{background:#173028;}
-    :root:not([data-theme="light"]) .pill.proceso{background:#0E2A33;}
-    :root:not([data-theme="light"]) .pill.esperando{background:#3A2A11; color:#F0B87A;}
-  }
-  :root[data-theme="dark"]{ --ink:#F3F1E7; --paper:#0E1712; --paper-2:#152420; --line:#2B3A34; --tint-orange:#2E2015; --tint-blue:#0E2A33; --tint-red:#3A1611; --tint-green:#173028; color-scheme:dark; }
   *{box-sizing:border-box;}
   html{scroll-padding-top:env(safe-area-inset-top,0px);}
   html,body{height:100%;}
@@ -247,6 +228,9 @@
   .lm-estado-sin_iniciar{opacity:.55;}
   .public-legend-compact{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; font-size:clamp(.65rem,1.1vw,.8rem); opacity:.7; margin-top:10px;}
   .org-link{display:block; margin-top:14px; font-size:.75rem; opacity:.4; text-decoration:none;}
+  .access-cards{display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; max-width:440px; margin-top:22px;}
+  .access-card{display:flex; align-items:center; justify-content:center; text-align:center; min-height:64px; padding:14px 12px; background:var(--paper-2); border:2px solid var(--line); border-radius:var(--radius); font-family:var(--font-display); font-weight:700; font-size:1.1rem; color:var(--ink); text-decoration:none;}
+  .access-card:hover{border-color:var(--brand-primary);}
   .attention-banner{background:#FBEAE3; border:2px solid var(--warning); border-radius:var(--radius); padding:12px 16px; margin:14px 0;}
   .attention-title{font-family:var(--font-display); font-weight:700; color:var(--warning); font-size:.95rem; margin-bottom:8px;}
   .attention-item{
@@ -263,6 +247,9 @@
   .pill.esperando{background:#FDE9D3; color:#8A4E14;}
   /* ---------- V3: sorteo en vivo (escenario ruleta + lista lateral) ---------- */
   .stage{max-width:1120px; margin:0 auto; padding:20px 18px 64px; display:grid; grid-template-columns:minmax(0,1fr) 250px; gap:28px; align-items:start;}
+  .stage.has-left{grid-template-columns:minmax(150px,210px) minmax(0,1fr) 250px;}
+  .stage-left{position:sticky; top:calc(12px + env(safe-area-inset-top,0px)); align-self:start; padding-top:120px;}
+  .stage-left .btn{width:100%;}
   .stage-main{min-width:0; display:flex; flex-direction:column; align-items:center;}
   .stage-status{width:100%; max-width:520px; text-align:center; font-weight:600; font-size:.95rem; padding:10px 14px; border-radius:10px; background:var(--paper-2); border:1px solid var(--line); margin:4px 0 14px;}
   .stage-status.hot{background:var(--tint-orange); border-color:var(--brand-secondary);}
@@ -282,7 +269,8 @@
   .draw-card.is-done{opacity:.55; border-style:dashed;}
   .draw-card .btn{margin-top:8px; width:100%;}
   @media (max-width:860px){
-    .stage{grid-template-columns:minmax(0,1fr); gap:14px;}
+    .stage, .stage.has-left{grid-template-columns:minmax(0,1fr); gap:14px;}
+    .stage-left{position:static; padding-top:0; order:-2;}
     .draw-aside{position:static; order:-1; padding:10px; min-width:0;}
     .draw-list{flex-direction:row; overflow-x:auto; padding-bottom:4px; scroll-snap-type:x proximity;}
     .draw-card{min-width:132px; flex:0 0 auto; scroll-snap-align:start;}
@@ -405,7 +393,7 @@ function syncQueue(key){
 function syncFlush(key){
   if(!sync.ready || !sync.dirty[key]) return;
   var val=syncLocal(key), ver=sync.ver[key];
-  var isReq = (key===REQ_KEY && val!==null);
+  var isReq = ((key===REQ_KEY || key===CONS_KEY) && val!==null);
   var p = isReq
     ? fetch(SB_URL+'/rest/v1/rpc/kv_merge_requests', {method:'POST', headers:syncHeaders(), body:JSON.stringify({p_key:key, p_incoming:val})})
     : fetch(SB_URL+'/rest/v1/kv?on_conflict=key', {method:'POST', headers:syncHeaders({'Prefer':'resolution=merge-duplicates,return=representation'}), body:JSON.stringify({key:key, value:(val===null ? {__deleted:true} : val)})});
@@ -590,16 +578,16 @@ function undoTurn(){
 function loadRequests(){ return safeGet(REQ_KEY) || []; }
 /* Cada solicitud lleva un contador _n que sube con cada cambio: así, al
    sincronizar entre dispositivos, se conserva la versión más nueva de cada una. */
-function saveRequests(a){
-  var prev={}; loadRequests().forEach(function(r){ prev[r.id]=r; });
+function stampVersions(a, prevList){
+  var prev={}; prevList.forEach(function(r){ prev[r.id]=r; });
   a.forEach(function(r){
     var p=prev[r.id];
     if(!p){ r._n=r._n||1; return; }
     var x=Object.assign({},r), y=Object.assign({},p); delete x._n; delete y._n;
     if(JSON.stringify(x)!==JSON.stringify(y)) r._n=(p._n||0)+1;
   });
-  safeSet(REQ_KEY,a);
 }
+function saveRequests(a){ stampVersions(a, loadRequests()); safeSet(REQ_KEY,a); }
 function isActiveReq(r){ return r.status==='open' || r.status==='claimed'; }
 function activeRequestFor(teamId,pid){
   var a=loadRequests().filter(function(r){ return r.teamId===teamId && r.postaId===pid && isActiveReq(r); });
@@ -649,6 +637,96 @@ function cancelRequest(pid){
   state.notice='Solicitud cancelada. Pueden seguir editando y volver a solicitar.'; render();
 }
 function resendRequest(pid){ var team=currentTeam(); submitForValidation(team,pid); }
+
+/* ---------- V3.3: CONSULTAS A UN MENTOR ----------
+   Llamada en cualquier momento a un mentor ELEGIDO por el grupo (solo si está
+   disponible). Es independiente de la validación de postas: no aprueba ni
+   rechaza nada. Se guarda en su propia clave para no tocar las solicitudes. */
+var CONS_KEY = STORAGE_PREFIX + 'consultas';
+function loadConsultas(){ return safeGet(CONS_KEY) || []; }
+function saveConsultas(a){ stampVersions(a, loadConsultas()); safeSet(CONS_KEY,a); }
+function isActiveCons(c){ return c.status==='open' || c.status==='claimed'; }
+function activeConsultaFor(teamId){
+  var a=loadConsultas().filter(function(c){ return c.teamId===teamId && isActiveCons(c); });
+  return a.length ? a[a.length-1] : null;
+}
+function updateConsulta(id, fn){
+  var list=loadConsultas(); var found=null;
+  list.forEach(function(c){ if(c.id===id){ fn(c); found=c; } });
+  if(found) saveConsultas(list);
+  return found;
+}
+function freeMentorIfBusy(mid){ var m=mentorById(mid); if(m && m.estado==='ocupado') setMentorEstadoRaw(mid,'disponible'); }
+function cancelTeamConsultas(teamId){
+  var list=loadConsultas(); var freed=[];
+  list.forEach(function(c){ if(c.teamId===teamId && isActiveCons(c)){ if(c.status==='claimed') freed.push(c.mentorId); c.status='cancelled'; c.resolvedAt=Date.now(); } });
+  saveConsultas(list); freed.forEach(freeMentorIfBusy);
+}
+function cancelMentorConsultas(mid){
+  var list=loadConsultas();
+  list.forEach(function(c){ if(c.mentorId===mid && isActiveCons(c)){ c.status='cancelled'; c.resolvedAt=Date.now(); } });
+  saveConsultas(list);
+}
+function openConsult(){ state.showConsult=true; state.consultNotice=''; render(); }
+function closeConsult(){ state.showConsult=false; state.consultNotice=''; render(); }
+function callMentor(mid){
+  var team=currentTeam(); if(!team) return;
+  if(activeConsultaFor(team.id)){ state.showConsult=false; render(); return; }
+  var m=mentorById(mid);
+  if(!m || m.estado!=='disponible'){ state.consultNotice='Ese mentor ya no está disponible. Elegí a otro.'; render(); return; }
+  var list=loadConsultas();
+  list.push({id:'cs'+Date.now()+'_'+Math.floor(Math.random()*1000), teamId:team.id, teamLabel:team.label, mentorId:mid, postaId:currentPostaId(team), status:'open', createdAt:Date.now(), claimedAt:null, resolvedAt:null});
+  saveConsultas(list);
+  state.showConsult=false; state.consultNotice=''; render();
+}
+function cancelConsult(){
+  var team=currentTeam(); var c=team ? activeConsultaFor(team.id) : null;
+  if(c && c.status==='open') updateConsulta(c.id, function(x){ x.status='cancelled'; x.resolvedAt=Date.now(); });
+  render();
+}
+function finishConsultGroup(){
+  var team=currentTeam(); var c=team ? activeConsultaFor(team.id) : null;
+  if(c && c.status==='claimed'){ updateConsulta(c.id, function(x){ x.status='done'; x.resolvedAt=Date.now(); }); freeMentorIfBusy(c.mentorId); }
+  render();
+}
+function consultSection(team){
+  if(!state.groupMode || !team || !team.mission) return '';
+  var c=activeConsultaFor(team.id), inner;
+  if(!c){
+    inner = '<b>¿Necesitan hablar con un mentor?</b>' +
+      '<p style="font-size:.85rem;opacity:.75;margin:6px 0 10px;">Pueden llamar a un mentor para una consulta en cualquier momento. Para que revise y valide una posta, usen «Solicitar validación» dentro de la posta.</p>' +
+      '<button class="btn small" data-action="openConsult">LLAMAR A UN MENTOR (CONSULTA)</button>';
+  } else {
+    var m=mentorById(c.mentorId), nm=m ? mentorFullName(m) : 'El mentor';
+    if(c.status==='open'){
+      inner = '<b>Consulta enviada a '+esc(nm)+'</b>' +
+        '<p style="font-size:.85rem;opacity:.75;margin:6px 0 10px;">Esperando que acepte…</p>' +
+        ((m && m.estado!=='disponible') ? '<div class="notice" style="margin:0 0 10px;">'+esc(nm)+' ya no está disponible. Cancelen la consulta y elijan a otro mentor.</div>' : '') +
+        '<button class="btn small ghost" data-action="cancelConsult">CANCELAR CONSULTA</button>';
+    } else {
+      inner = '<b>'+esc(nm)+' aceptó su consulta</b>' +
+        '<p style="font-size:.85rem;opacity:.75;margin:6px 0 10px;">Los está atendiendo. Cuando terminen, toquen el botón.</p>' +
+        '<button class="btn small ghost" data-action="finishConsultGroup">CONSULTA TERMINADA</button>';
+    }
+  }
+  return '<div class="screen" style="padding-bottom:0;"><div class="card" style="margin-bottom:0;">'+inner+'</div></div>' + (state.showConsult ? renderConsultModal() : '');
+}
+function renderConsultModal(){
+  var ms=loadMentors().filter(function(m){ return m.estado!=='inactivo'; });
+  var rows=ms.map(function(m){
+    var extra=[m.specialty,m.org].filter(Boolean).join(' · ');
+    return '<div class="req-card"><div class="req-info"><b>'+esc(mentorFullName(m))+'</b>'+(extra?'<small>'+esc(extra)+'</small>':'')+'</div>' +
+      estadoPillForMentor(m) +
+      '<button class="btn small" data-action="callMentor" data-mentor-id="'+m.id+'" '+(m.estado==='disponible'?'':'disabled')+'>LLAMAR</button></div>';
+  }).join('');
+  return '<div class="modal-overlay"><div class="modal">' +
+    '<h3>Llamar a un mentor</h3>' +
+    '<p style="font-size:.85rem;opacity:.7;">Elijan a quién llamar para la consulta. Solo se puede llamar a los mentores disponibles; si está ocupado, elijan a otro.</p>' +
+    (state.consultNotice ? '<div class="warn">'+esc(state.consultNotice)+'</div>' : '') +
+    (rows || '<p style="opacity:.6;">No hay mentores cargados.</p>') +
+    '<div class="footer-actions"><button class="btn ghost" data-action="closeConsult">CERRAR</button></div>' +
+  '</div></div>';
+}
 
 var MENTOR_ESTADOS = [
   {k:'disponible', t:'Disponible'},
@@ -701,11 +779,11 @@ function mentorDisplayName(record){
 }
 
 /* ---------- ROUTER ---------- */
-var state = { screen:'welcome', teamId:null, postaId:null, wheelLanded:null, tab:'mapa', notice:'', confirmApproved:null, showGuideForm:false, showOrgGate:false, orgPinError:'', showResetConfirm:false, adminTab:'resumen', adminDetail:null, adminFilters:{team:'',mission:'',status:'',mentor:''}, editingMentorId:null, confirmDeleteMentorId:null, showAddMentorForm:false, activityFilters:{mentor:'',team:'',posta:''}, stageTeam:null, lastAccepted:null, mentorId:null, mentorTab:'solicitudes', mentorReviewId:null, mentorNotice:'', showReject:false, showMentorGate:false, mentorGateError:'', alertsOn:false, seenReqIds:null, cardCodeTeam:null, cardCodeError:'', groupMode:null, groupCodeError:'', groupCodeDraft:'', accessNotice:'', confirmResetGroupId:null, spunKey:null, remoteSpin:false };
+var state = { screen:'welcome', teamId:null, postaId:null, wheelLanded:null, tab:'mapa', notice:'', confirmApproved:null, showGuideForm:false, showOrgGate:false, orgPinError:'', showResetConfirm:false, adminTab:'resumen', adminDetail:null, adminFilters:{team:'',mission:'',status:'',mentor:''}, editingMentorId:null, confirmDeleteMentorId:null, showAddMentorForm:false, activityFilters:{mentor:'',team:'',posta:''}, stageTeam:null, lastAccepted:null, mentorId:null, mentorTab:'solicitudes', mentorReviewId:null, mentorNotice:'', showReject:false, showMentorGate:false, mentorGateError:'', alertsOn:false, seenReqIds:null, seenConsIds:null, showConsult:false, consultNotice:'', cardCodeTeam:null, cardCodeError:'', groupMode:null, groupCodeError:'', groupCodeDraft:'', accessNotice:'', confirmResetGroupId:null, spunKey:null, remoteSpin:false };
 
 function go(screen, extra){
   state.screen = screen; state.notice=''; state.showGuideForm=false; state.showOrgGate=false; state.orgPinError=''; state.showResetConfirm=false;
-  state.showMentorGate=false; state.mentorGateError='';
+  state.showMentorGate=false; state.mentorGateError=''; state.showConsult=false; state.consultNotice='';
   if(screen==='welcome') state.groupMode=null;
   state.cardCodeTeam=null; state.cardCodeError='';
   if(extra) Object.assign(state, extra);
@@ -802,11 +880,11 @@ function renderWelcome(){
     '<p class="tagline">Un recorrido para descubrir, validar, crear, probar y comunicar soluciones.</p>' +
     '<button class="btn" data-nav="login">COMENZAR</button>' +
     '<button class="btn secondary" style="margin-top:12px;" data-nav="public">VER PROGRESO EN VIVO</button>' +
-    '<button class="btn ghost" style="margin-top:12px;" data-nav="wheel">RULETA DE MISIONES</button>' +
+    '<button class="btn ghost" style="margin-top:12px;" data-nav="wheel">SORTEO DE MISIONES</button>' +
     '<div class="footnote">Metodología desarrollada por +I Consultora Internacional</div>' +
-    '<div style="display:flex;gap:18px;flex-wrap:wrap;">' +
-      '<a href="#" class="org-link" data-action="openMentorGate">Mentores →</a>' +
-      '<a href="#" class="org-link" data-action="openOrgGate">Organización →</a>' +
+    '<div class="access-cards">' +
+      '<a href="#" class="access-card" data-action="openMentorGate">Mentores →</a>' +
+      '<a href="#" class="access-card" data-action="openOrgGate">Organización →</a>' +
     '</div>' +
   '</div>' + orgGate + mentorGate;
 }
@@ -863,6 +941,7 @@ function submitMentorPin(){
   if(pin!==m.pin){ state.mentorGateError='PIN incorrecto. Probá de nuevo.'; render(); return; }
   try{ sessionStorage.setItem(MENTOR_SESSION_KEY, m.id); }catch(e){}
   state.seenReqIds = loadRequests().filter(function(r){return r.status==='open';}).map(function(r){return r.id;});
+  state.seenConsIds = loadConsultas().filter(function(c){return c.status==='open' && c.mentorId===m.id;}).map(function(c){return c.id;});
   go('mentor', {mentorId:m.id, mentorTab:'solicitudes', mentorReviewId:null, mentorNotice:''});
 }
 function mentorLogout(){
@@ -1028,6 +1107,7 @@ function closeGroupAccess(id){
 }
 function resetGroup(id){
   cancelTeamRequests(id, 0);
+  cancelTeamConsultas(id);
   safeRemove(STORAGE_PREFIX+id);
   var g=loadGame();
   if(g.turnTeamId===id){ g.turnTeamId=null; g.drawStartedAt=null; g.drawPool=[]; g.pendingMission=null; }
@@ -1132,7 +1212,7 @@ function stageStatus(g){
     if(isDrawAnimating(g)) return {hot:true, text:'Sorteando el próximo grupo…'};
     if(g.turnTeamId===gm){
       var mc = state.stageTeam===gm || (g.pendingMission && g.pendingMission.teamId===gm);
-      return {hot:true, text: mc ? '¡Giren la rueda!' : '¡Les tocó! Toquen «Somos este grupo» en su tarjeta para habilitar la ruleta.'};
+      return {hot:true, text: mc ? '¡Giren la rueda!' : '¡Les tocó! Toquen «Somos este grupo» en su tarjeta para habilitar el sorteo.'};
     }
     if(g.turnTeamId) return {hot:false, text:'Turno de '+teamLabel(g.turnTeamId)+'. Esperen el próximo sorteo.'};
     return {hot:false, text:'Están adentro. Esperen a que la organización lance el sorteo.'};
@@ -1205,8 +1285,10 @@ function renderWheel(){
   var noticeHtml = state.notice ? '<div class="notice" style="width:100%;max-width:520px;">'+esc(state.notice)+'</div>' : '';
   var headHtml = gm
     ? '<h2 style="text-align:center;margin:0 0 6px;">¡Bienvenidos, '+teamLabel(gm)+'!</h2>'
-    : '<a href="#" class="backlink" data-nav="welcome" style="align-self:flex-start;">← Volver</a><h2 style="text-align:center;margin:0 0 6px;">Ruleta de misiones</h2>';
-  return (gm ? topbar(loadTeam(gm)) : '') + '<div class="stage">' +
+    : '<a href="#" class="backlink" data-nav="welcome" style="align-self:flex-start;">← Volver</a><h2 style="text-align:center;margin:0 0 6px;">Sorteo de misiones</h2>';
+  var drawLeft = gm ? '' : '<div class="stage-left"><button class="btn" data-action="startDraw" '+((!g.turnTeamId && teamsWithoutMission().length>0)?'':'disabled')+'>SORTEAR SIGUIENTE GRUPO</button></div>';
+  return (gm ? topbar(loadTeam(gm)) : '') + '<div class="stage'+(gm?'':' has-left')+'">' +
+    drawLeft +
     '<div class="stage-main">' +
       headHtml +
       '<div class="stage-status'+(st.hot?' hot':'')+'" id="stageStatus">'+esc(st.text)+'</div>' +
@@ -1365,7 +1447,7 @@ function renderMap(){
       '<p style="font-size:.8rem;opacity:.65;margin-top:6px;">'+completedCount+' de '+POSTAS.length+' postas completadas</p>' +
       '<div class="trail">'+trail+'</div>';
   }
-  return topbar(team) + '<div class="screen">' + tabsHtml + body + '</div>';
+  return topbar(team) + consultSection(team) + '<div class="screen">' + tabsHtml + body + '</div>';
 }
 
 function renderTeamDashboardInner(team){
@@ -1503,7 +1585,7 @@ function renderPosta(){
   var rej = (team.postas[pid].status==='current' && team.lastRejection) ? team.lastRejection[pid] : null;
   var rejectHtml = rej ? '<div class="warn">No aprobada por '+esc(mentorDisplayName(rej))+' ('+rej.time+'): "'+esc(rej.reason)+'". Corrijan lo indicado y vuelvan a solicitar validación.</div>' : '';
   var guideModal = !state.showGuideForm ? '' : (pid==='p2' ? renderValidationFormModal() : (pid==='p5' ? renderSolutionGuideModal() : ''));
-  return topbar(team) + '<div class="screen">' +
+  return topbar(team) + consultSection(team) + '<div class="screen">' +
     '<a href="#" class="backlink" data-nav="map">← Mi ruta</a>' +
     noticeHtml + rejectHtml + body + validationHtml + sealedHtml +
   '</div>' + guideModal;
@@ -2048,7 +2130,6 @@ function renderAdmin(){
 }
 function renderDrawAdmin(){
   var g=loadGame(); var anim=isDrawAnimating(g); var pending=teamsWithoutMission();
-  var canDraw = !g.turnTeamId && pending.length>0;
   var why='';
   if(!pending.length) why='Los 7 grupos ya tienen misión. El sorteo terminó.';
   else if(anim) why='Sorteando…';
@@ -2059,13 +2140,10 @@ function renderDrawAdmin(){
     '<div style="min-width:0;">' +
       '<div class="card">' +
         '<b style="font-size:.8rem;text-transform:uppercase;opacity:.6;">Sorteo del próximo grupo</b>' +
-        '<p style="font-size:.88rem;opacity:.8;margin:8px 0 0;">Cada vez que tocás el botón, la lista de la pantalla de ruleta recorre los grupos que todavía no tienen misión y se detiene en uno. Ese grupo confirma con «Somos este grupo» y gira la rueda. Quedan '+pending.length+' por sortear.</p>' +
+        '<p style="font-size:.88rem;opacity:.8;margin:8px 0 0;">El sorteo se lanza desde la pantalla de sorteo, con el botón a la izquierda de la rueda: la lista recorre los grupos que todavía no tienen misión y se detiene en uno. Ese grupo confirma con «Somos este grupo» y gira la rueda. Quedan '+pending.length+' por sortear.</p>' +
         (why?'<div class="notice">'+esc(why)+'</div>':'') +
-        '<div class="footer-actions">' +
-          '<button class="btn" data-action="startDraw" '+(canDraw?'':'disabled')+'>SORTEAR SIGUIENTE GRUPO</button>' +
-          (canUndo?'<button class="btn ghost" data-action="undoTurn">DESHACER TURNO</button>':'') +
-        '</div>' +
-        '<p style="font-size:.8rem;margin:14px 0 0;"><a href="#" data-nav="wheel" style="color:var(--brand-primary);font-weight:600;">Abrir pantalla de ruleta (para proyectar) →</a></p>' +
+        (canUndo?'<div class="footer-actions"><button class="btn ghost" data-action="undoTurn">DESHACER TURNO</button></div>':'') +
+        '<p style="font-size:.8rem;margin:14px 0 0;"><a href="#" data-nav="wheel" style="color:var(--brand-primary);font-weight:600;">Abrir pantalla de sorteo (para proyectar) →</a></p>' +
       '</div>' +
       '<div class="card"><b style="font-size:.8rem;text-transform:uppercase;opacity:.6;">Orden de tiro</b>' +
         (orderChips?'<div class="order-row">'+orderChips+'</div>':'<p style="font-size:.85rem;opacity:.6;margin:8px 0 0;">Todavía no salió ningún grupo.</p>') +
@@ -2177,6 +2255,7 @@ function saveMentorEdit(id){
 function askDeleteMentor(id){ state.confirmDeleteMentorId=id; state.editingMentorId=null; render(); }
 function cancelDeleteMentor(){ state.confirmDeleteMentorId=null; render(); }
 function confirmDeleteMentor(id){
+  cancelMentorConsultas(id);
   var reqs=loadRequests(); reqs.forEach(function(r){ if(r.status==='claimed' && r.claimedBy===id){ r.status='open'; r.claimedBy=null; r.claimedAt=null; } }); saveRequests(reqs);
   var mentors=loadMentors().filter(function(m){ return m.id!==id; });
   saveMentors(mentors);
@@ -2209,6 +2288,7 @@ function confirmResetAll(){
   safeRemove(MISSIONS_TAKEN_KEY);
   safeRemove(GAME_KEY);
   safeRemove(REQ_KEY);
+  safeRemove(CONS_KEY);
   var acR=loadAccess(); TEAM_IDS.forEach(function(id){ acR[id].v=(acR[id].v||1)+1; acR[id].lastLogin=null; }); saveAccess(acR);
   saveMentors(loadMentors().map(function(m){ if(m.estado==='ocupado') m.estado='disponible'; return m; }));
   state.showResetConfirm=false; state.lastAccepted=null; state.stageTeam=null; state.wheelLanded=null;
@@ -2351,6 +2431,17 @@ function myClaimedRequest(){
   var a=loadRequests().filter(function(r){ return r.status==='claimed' && r.claimedBy===state.mentorId; });
   return a.length ? a[0] : null;
 }
+function myClaimedConsulta(){
+  var a=loadConsultas().filter(function(c){ return c.status==='claimed' && c.mentorId===state.mentorId; });
+  return a.length ? a[0] : null;
+}
+function consultaCardHtml(c, canAccept){
+  var t=loadTeam(c.teamId); var cur=currentPostaId(t);
+  return '<div class="req-card"><div class="req-info"><b>'+esc(c.teamLabel)+' '+pill('proceso','CONSULTA')+'</b>' +
+    '<small>'+(t.mission?t.mission.icon+' '+esc(t.mission.name)+' · ':'')+(cur?'Posta actual: P'+POSTA_BY_ID[cur].num+' · '+esc(POSTA_BY_ID[cur].title):'')+'</small></div>' +
+    '<span class="req-wait">hace '+formatMinutes(minutesAgo(c.createdAt))+'</span>' +
+    '<button class="btn small" data-action="claimConsulta" data-cons="'+c.id+'" '+(canAccept?'':'disabled')+'>ACEPTAR</button></div>';
+}
 function teamContextHtml(t, compact){
   var m=t.mission;
   var desafio = t.postas.p3.challenge ? esc(t.postas.p3.challenge) : '<span class="pending-txt">Pendiente — el grupo lo define en la Posta 3.</span>';
@@ -2387,9 +2478,11 @@ function renderMentor(){
   var reqs=loadRequests();
   var open=reqs.filter(function(r){ return r.status==='open'; }).sort(function(a,b){ return a.createdAt-b.createdAt; });
   var mine=myClaimedRequest();
+  var myCons=myClaimedConsulta();
+  var openCons=loadConsultas().filter(function(c){ return c.status==='open' && c.mentorId===me.id; }).sort(function(a,b){ return a.createdAt-b.createdAt; });
   var others=reqs.filter(function(r){ return r.status==='claimed' && r.claimedBy!==me.id; });
-  var busy = !!mine;
-  var estadoCtl = busy ? '<span style="font-size:.78rem;opacity:.75;">Validando: vas a quedar disponible al resolver.</span>'
+  var busy = !!mine || !!myCons;
+  var estadoCtl = busy ? '<span style="font-size:.78rem;opacity:.75;">'+(mine?'Validando':'En consulta')+': vas a quedar disponible al resolver.</span>'
     : (me.estado==='disponible'
         ? '<button class="btn small ghost" data-action="setMyEstado" data-estado="no_disponible">Pausar (no disponible)</button>'
         : '<button class="btn small" data-action="setMyEstado" data-estado="disponible">Ponerme disponible</button>');
@@ -2402,7 +2495,7 @@ function renderMentor(){
     return head + '<div class="screen">' + notice + renderMentorReview(state.mentorReviewId, me) + '</div>';
   }
   var tabs='<div class="tabs">' +
-    '<button class="tab '+(state.mentorTab==='solicitudes'?'active':'')+'" data-mtab="solicitudes">Solicitudes'+(open.length?'<span class="count">'+open.length+'</span>':'')+'</button>' +
+    '<button class="tab '+(state.mentorTab==='solicitudes'?'active':'')+'" data-mtab="solicitudes">Solicitudes'+((open.length+openCons.length)?'<span class="count">'+(open.length+openCons.length)+'</span>':'')+'</button>' +
     '<button class="tab '+(state.mentorTab==='grupos'?'active':'')+'" data-mtab="grupos">Grupos</button>' +
   '</div>';
   var body='';
@@ -2418,21 +2511,26 @@ function renderMentor(){
       '<div class="req-card"><div class="req-info"><b>'+esc(mine.teamLabel)+' · Posta '+POSTA_BY_ID[mine.postaId].num+' — '+POSTA_BY_ID[mine.postaId].title+'</b><small>Aceptada hace '+formatMinutes(minutesAgo(mine.claimedAt))+'</small></div>' +
       '<button class="btn small" data-action="openReview" data-req="'+mine.id+'">REVISAR POSTA</button></div></div>') : '';
     var canAccept = me.estado==='disponible' && !busy;
-    var whyNot = busy ? 'Terminá tu validación en curso para aceptar otra.' : (me.estado!=='disponible' ? 'Ponete disponible para aceptar solicitudes.' : '');
+    var whyNot = busy ? 'Terminá tu atención en curso para aceptar otra.' : (me.estado!=='disponible' ? 'Ponete disponible para aceptar solicitudes.' : '');
+    var myConsHtml = myCons ? ('<div class="card" style="border-color:var(--success);"><b style="font-size:.8rem;text-transform:uppercase;opacity:.7;">Tu consulta en curso</b>' +
+      '<div class="req-card"><div class="req-info"><b>'+esc(myCons.teamLabel)+' '+pill('proceso','CONSULTA')+'</b><small>Aceptada hace '+formatMinutes(minutesAgo(myCons.claimedAt))+'</small></div>' +
+      '<button class="btn small" data-action="finishConsulta" data-cons="'+myCons.id+'">FINALIZAR CONSULTA</button></div></div>') : '';
+    var openConsHtml = openCons.length ? ('<div class="card"><b style="font-size:.8rem;text-transform:uppercase;opacity:.6;">Consultas para vos ('+openCons.length+')</b>' +
+      openCons.map(function(c){ return consultaCardHtml(c, canAccept); }).join('') + '</div>') : '';
     var openHtml = open.length ? open.map(function(r){
       var t=loadTeam(r.teamId);
-      return '<div class="req-card"><div class="req-info"><b>'+esc(r.teamLabel)+' · Posta '+POSTA_BY_ID[r.postaId].num+' — '+POSTA_BY_ID[r.postaId].title+'</b>' +
+      return '<div class="req-card"><div class="req-info"><b>'+esc(r.teamLabel)+' '+pill('esperando','VALIDACIÓN')+' · Posta '+POSTA_BY_ID[r.postaId].num+' — '+POSTA_BY_ID[r.postaId].title+'</b>' +
         '<small>'+(t.mission?t.mission.icon+' '+esc(t.mission.name)+' · ':'')+(t.lastRejection && t.lastRejection[r.postaId]?'Segunda revisión (antes no aprobada)':'Primera revisión')+'</small></div>' +
         '<span class="req-wait">hace '+formatMinutes(minutesAgo(r.createdAt))+'</span>' +
         '<button class="btn small" data-action="claimRequest" data-req="'+r.id+'" '+(canAccept?'':'disabled')+'>ACEPTAR</button></div>';
-    }).join('') : '<p style="font-size:.88rem;opacity:.65;margin:8px 0 0;">No hay solicitudes pendientes. Cuando un grupo pida validación aparece acá'+(state.alertsOn?' y suena una alerta':'')+'.</p>';
+    }).join('') : '<p style="font-size:.88rem;opacity:.65;margin:8px 0 0;">No hay validaciones pendientes. Cuando un grupo pida validación aparece acá'+(state.alertsOn?' y suena una alerta':'')+'.</p>';
     var othersHtml = others.length ? ('<div class="card"><b style="font-size:.8rem;text-transform:uppercase;opacity:.6;">Tomadas por otros mentores</b>' + others.map(function(r){
       var om=mentorById(r.claimedBy);
       return '<div class="req-card" style="opacity:.75;"><div class="req-info"><b>'+esc(r.teamLabel)+' · Posta '+POSTA_BY_ID[r.postaId].num+'</b><small>Tomada por '+esc(om?mentorFullName(om):'otro mentor')+' hace '+formatMinutes(minutesAgo(r.claimedAt))+'</small></div></div>';
     }).join('') + '</div>') : '';
-    body = mineHtml +
-      '<div class="card"><b style="font-size:.8rem;text-transform:uppercase;opacity:.6;">Solicitudes pendientes ('+open.length+')</b>' +
-        (whyNot && open.length ? '<div class="notice">'+esc(whyNot)+'</div>' : '') + openHtml + '</div>' + othersHtml;
+    body = myConsHtml + mineHtml + openConsHtml +
+      '<div class="card"><b style="font-size:.8rem;text-transform:uppercase;opacity:.6;">Validaciones pendientes ('+open.length+')</b>' +
+        (whyNot && (open.length || openCons.length) ? '<div class="notice">'+esc(whyNot)+'</div>' : '') + openHtml + '</div>' + othersHtml;
   }
   return head + '<div class="screen">' + bar + notice + tabs + body + '</div>';
 }
@@ -2475,6 +2573,22 @@ function claimRequest(reqId){
   setMentorEstadoRaw(me.id,'ocupado');
   state.mentorNotice=''; state.showReject=false; state.mentorReviewId=reqId; render(); window.scrollTo(0,0);
 }
+function claimConsulta(id){
+  var me=currentMentor(); if(!me) return;
+  if(me.estado!=='disponible' || myClaimedRequest() || myClaimedConsulta()){ state.mentorNotice='Para aceptar tenés que estar disponible y sin otra atención en curso.'; render(); return; }
+  var fresh=loadConsultas().filter(function(c){ return c.id===id; })[0];
+  if(!fresh || fresh.status!=='open' || fresh.mentorId!==me.id){ state.mentorNotice='Esa consulta ya no está disponible.'; render(); return; }
+  updateConsulta(id, function(c){ c.status='claimed'; c.claimedAt=Date.now(); });
+  var tEl=document.getElementById('toast'); if(tEl) tEl.hidden=true; document.title=baseTitle;
+  setMentorEstadoRaw(me.id,'ocupado');
+  state.mentorNotice=''; render(); window.scrollTo(0,0);
+}
+function finishConsulta(id){
+  var me=currentMentor(); if(!me) return;
+  updateConsulta(id, function(c){ if(c.status==='claimed' && c.mentorId===me.id){ c.status='done'; c.resolvedAt=Date.now(); } });
+  freeMentorIfBusy(me.id);
+  state.mentorNotice='Consulta finalizada. Volviste a estar disponible.'; render();
+}
 function releaseRequest(reqId){
   var me=currentMentor(); if(!me) return;
   updateRequest(reqId, function(r){ if(r.status==='claimed' && r.claimedBy===me.id){ r.status='open'; r.claimedBy=null; r.claimedAt=null; } });
@@ -2508,7 +2622,7 @@ function rejectRequest(reqId){
   render(); window.scrollTo(0,0);
 }
 function setMyEstado(estado){
-  var me=currentMentor(); if(!me || myClaimedRequest()) return;
+  var me=currentMentor(); if(!me || myClaimedRequest() || myClaimedConsulta()) return;
   setMentorEstadoRaw(me.id, estado); state.mentorNotice=''; render();
 }
 
@@ -2550,6 +2664,16 @@ function checkMentorAlerts(){
     document.title='('+open.length+') Solicitud de validación';
     if(state.alertsOn) beep();
   }
+  var oc=loadConsultas().filter(function(c){ return c.status==='open' && c.mentorId===state.mentorId; });
+  var cids=oc.map(function(c){ return c.id; });
+  if(state.seenConsIds===null){ state.seenConsIds=cids; return; }
+  var freshC=oc.filter(function(c){ return state.seenConsIds.indexOf(c.id)===-1; });
+  state.seenConsIds=cids;
+  if(freshC.length && me && me.estado==='disponible'){
+    showToast('🔔 Consulta: te llama '+freshC[freshC.length-1].teamLabel);
+    document.title='('+oc.length+') Consulta de un grupo';
+    if(state.alertsOn) beep();
+  }
 }
 
 /* ---------- PUBLIC RACE PANEL ---------- */
@@ -2570,7 +2694,7 @@ function laneNodes(team){
 function publicTurnLine(){
   var g=loadGame(); var pending=teamsWithoutMission().length;
   if(!pending && !g.turnTeamId) return '';
-  var txt = isDrawAnimating(g) ? '🎲 Sorteando el próximo grupo…' : (g.turnTeamId ? ('🎯 Turno de ruleta: '+teamLabel(g.turnTeamId)) : ('⏳ Sorteo en curso · '+(7-pending)+'/7 grupos con misión'));
+  var txt = isDrawAnimating(g) ? '🎲 Sorteando el próximo grupo…' : (g.turnTeamId ? ('🎯 Turno de sorteo: '+teamLabel(g.turnTeamId)) : ('⏳ Sorteo en curso · '+(7-pending)+'/7 grupos con misión'));
   return '<p class="public-turn">'+txt+'</p>';
 }
 function renderPublic(){
@@ -2642,6 +2766,13 @@ function afterRender(){
     if(an==='submitMentorPin'){ submitMentorPin(); return; }
     if(an==='mentorLogout'){ mentorLogout(); return; }
     if(an==='claimRequest'){ claimRequest(act.getAttribute('data-req')); return; }
+    if(an==='openConsult'){ openConsult(); return; }
+    if(an==='closeConsult'){ closeConsult(); return; }
+    if(an==='callMentor'){ callMentor(act.getAttribute('data-mentor-id')); return; }
+    if(an==='cancelConsult'){ cancelConsult(); return; }
+    if(an==='finishConsultGroup'){ finishConsultGroup(); return; }
+    if(an==='claimConsulta'){ claimConsulta(act.getAttribute('data-cons')); return; }
+    if(an==='finishConsulta'){ finishConsulta(act.getAttribute('data-cons')); return; }
     if(an==='openReview'){ state.mentorReviewId=act.getAttribute('data-req'); state.showReject=false; state.mentorNotice=''; render(); window.scrollTo(0,0); return; }
     if(an==='backToRequests'){ e.preventDefault(); state.mentorReviewId=null; state.showReject=false; render(); return; }
     if(an==='approveRequest'){ approveRequest(act.getAttribute('data-req')); return; }
@@ -2752,7 +2883,7 @@ function sharedKeyNeedsRender(key){
   if(sc==='admin' || sc==='public' || sc==='mentor' || sc==='wheel' || sc==='login'){
     return !(sc==='admin' && state.adminTab==='accesos' && key===STORAGE_PREFIX+'app_url');
   }
-  return (sc==='map' || sc==='posta') && (key===REQ_KEY || key===ACCESS_KEY || key===STORAGE_PREFIX+state.teamId);
+  return (sc==='map' || sc==='posta') && (key===REQ_KEY || key===CONS_KEY || key===MENTORS_KEY || key===ACCESS_KEY || key===STORAGE_PREFIX+state.teamId);
 }
 /* Cambios hechos en otra pestaña del navegador o traídos de la nube. */
 window.addEventListener('storage', function(e){ if(sharedKeyNeedsRender(e.key)) softRender(); });

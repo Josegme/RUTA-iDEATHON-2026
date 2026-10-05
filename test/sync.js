@@ -1,10 +1,11 @@
 const { chromium } = require('playwright');
 /* Prueba de sincronización con 5 dispositivos independientes contra Supabase real.
-   ATENCIÓN: VACÍA la tabla compartida kv al empezar y al terminar. No la corras
-   durante el evento. Uso:
+   ATENCIÓN: escribe y VACÍA la tabla compartida kv. Por seguridad SOLO corre si la
+   tabla está vacía al empezar (así nunca borra mentores, claves ni datos reales de
+   la organización). Pensada para un proyecto de pruebas, no para el del evento. Uso:
      CONFIRM_WIPE=yes BASE_URL=http://localhost:8765/index.html?sync=1 node sync.js
    (PW_EXE opcional: ruta a un Chromium ya instalado) */
-if (process.env.CONFIRM_WIPE !== 'yes') { console.log('Esta prueba vacía la tabla kv de Supabase. Para continuar: CONFIRM_WIPE=yes node sync.js'); process.exit(1); }
+if (process.env.CONFIRM_WIPE !== 'yes') { console.log('Esta prueba escribe en la tabla kv de Supabase. Para continuar: CONFIRM_WIPE=yes node sync.js'); process.exit(1); }
 const BASE = process.env.BASE_URL || 'http://localhost:8765/index.html?sync=1';
 const SB = 'https://erzghhfrlwjllmwmhtsn.supabase.co', KEY = 'sb_publishable_c-YyUXwqwTx-ZW85hR7DqA_Oy_3pgXl';
 const log = (...a) => console.log(...a);
@@ -14,7 +15,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const wipe = () => fetch(SB + '/rest/v1/kv?key=like.rutaideathon_v3_*', { method: 'DELETE', headers: { apikey: KEY } }).then(r => r.status);
 
 (async () => {
-  log('limpieza inicial:', await wipe());
+  const existing = await fetch(SB + '/rest/v1/kv?select=key&limit=1', { headers: { apikey: KEY } }).then(r => r.json());
+  if (!Array.isArray(existing) || existing.length) { log('La tabla kv NO está vacía (o no responde): no se ejecuta para no borrar datos reales.'); process.exit(1); }
   const browser = await chromium.launch(process.env.PW_EXE ? { executablePath: process.env.PW_EXE } : {});
   const errors = [];
   // cada dispositivo = contexto propio (localStorage independiente)
@@ -32,13 +34,13 @@ const wipe = () => fetch(SB + '/rest/v1/kv?key=like.rutaideathon_v3_*', { method
   const org = await device('#admin', 'org');
   await org.fill('#orgPinInput', '2026');
   await org.click('[data-action="submitOrgPin"]');
-  await org.waitForSelector('[data-action="startDraw"]');
+  await org.waitForSelector('.tab.active');
   await sleep(1500);
   check((await dot(org)) === 'Sincronizado', 'Indicador de estado: Sincronizado');
   const stage = await device('#ruleta', 'stage');
 
   log('\n[2] Sorteo en vivo cruza dispositivos');
-  await org.click('[data-action="startDraw"]');
+  await stage.click('[data-action="startDraw"]');
   await stage.waitForSelector('.draw-card.is-turn [data-action="confirmStageTeam"]', { timeout: 15000 });
   const gO = await ls(org, 'game'), gS = await ls(stage, 'game');
   check(gO.turnTeamId && gO.turnTeamId === gS.turnTeamId, 'Proyector recibió el grupo sorteado: ' + gS.turnTeamId);
@@ -112,6 +114,21 @@ const wipe = () => fetch(SB + '/rest/v1/kv?key=like.rutaideathon_v3_*', { method
   await sleep(2500);
   check(reqs.length === 1 || (await ls(org, 'requests')).length >= 1, 'Organización tiene el historial de solicitudes (' + (await ls(org, 'requests')).length + ')');
 
+  log('\n[4b] Consulta a un mentor elegido, entre dispositivos');
+  await phone.click('text=IR A LA POSTA 2');
+  await phone.waitForSelector('[data-action="openConsult"]');
+  await phone.click('[data-action="openConsult"]');
+  await phone.click('[data-action="callMentor"][data-mentor-id="me1"]');
+  await mA.waitForSelector('[data-action="claimConsulta"]', { timeout: 15000 });
+  check(true, 'La consulta llega al mentor elegido, en otro dispositivo');
+  check((await mB.locator('[data-action="claimConsulta"]').count()) === 0, 'El otro mentor no la ve');
+  await mA.click('[data-action="claimConsulta"]');
+  await phone.waitForSelector('text=aceptó su consulta', { timeout: 15000 });
+  check(true, 'El grupo ve que el mentor aceptó la consulta');
+  await mA.click('[data-action="finishConsulta"]');
+  await phone.waitForSelector('[data-action="openConsult"]', { timeout: 15000 });
+  check(true, 'Al finalizar, el grupo puede volver a llamar');
+
   log('\n[5] Persistencia: un dispositivo nuevo ve el estado actual');
   const late = await device('#public', 'late');
   await late.waitForSelector('#app *');
@@ -127,6 +144,7 @@ const wipe = () => fetch(SB + '/rest/v1/kv?key=like.rutaideathon_v3_*', { method
   check((await ls(phone, tid)) === null, 'El celular del grupo ya no tiene el equipo (borrado propagado)');
   check((await ls(stage, 'game')) === null, 'El proyector ya no tiene el sorteo');
   check(((await ls(mB, 'requests')) || []).length === 0, 'El mentor ya no tiene solicitudes');
+  check((await ls(mB, 'consultas')) === null, 'El mentor ya no tiene consultas');
 
   log('\n[7] Errores de página:', errors.length ? errors : 'ninguno');
   if (errors.length) failures++;
