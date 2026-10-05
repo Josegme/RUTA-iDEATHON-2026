@@ -43,7 +43,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const stage = await open('#ruleta', 'stage');
   const pub = await open('#public', 'public');
   check(await stage.locator('#spinBtn').isDisabled(), 'Ruleta bloqueada antes del sorteo');
-  check((await stage.locator('#stageStatus').innerText()).includes('Esperando que la organización'), 'Escenario muestra "esperando sorteo"');
+  check(await stage.locator('#stageStatus').count() === 0, 'La pantalla del sorteo no muestra leyenda de instrucción (solo título, rueda y tarjetas)');
 
   // ---------- SORTEO + DESHACER ----------
   log('\n[2] Sorteo en vivo, animación y deshacer turno');
@@ -120,7 +120,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   for (const id of ['g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7']) teams.push(await ls(org, id));
   const ms = teams.map(t => t && t.mission && t.mission.id);
   check(ms.every(Boolean) && new Set(ms).size === 7, '7 grupos con 7 misiones distintas: ' + ms.join(','));
-  check((await stage.locator('#stageStatus').innerText()).includes('Sorteo completo'), 'Escenario indica sorteo completo');
+  check(await stage.locator('.draw-card.is-done').count() === 7, 'Escenario: las 7 tarjetas de grupo figuran con misión (sorteo completo)');
   await stage.waitForSelector('[data-action="startDraw"][disabled]');
   check(true, 'Botón de sorteo deshabilitado al terminar');
   check(await pub.locator('.public-turn').count() === 0, 'Tablero público oculta la línea de turno al terminar');
@@ -405,7 +405,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   check(!(await ls(org, 'g1')) && !(await ls(org, 'game')) && !(await ls(org, 'requests')), 'Reinicio borra grupos, sorteo y solicitudes');
   check((await ls(org, 'mentors')).length === 10, 'Reinicio conserva los mentores');
   await sleep(500);
-  check((await stage.locator('#stageStatus').innerText()).includes('Esperando que la organización'), 'Escenario vuelve a "esperando sorteo"');
+  check(await stage.locator('.draw-card.is-done').count() === 0, 'Escenario vuelve a "esperando sorteo" (sin grupos con misión)');
 
   // ---------- Móvil ----------
   log('\n[11] Ancho de celular');

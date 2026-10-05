@@ -1291,7 +1291,7 @@ function renderWheel(){
     drawLeft +
     '<div class="stage-main">' +
       headHtml +
-      '<div class="stage-status'+(st.hot?' hot':'')+'" id="stageStatus">'+esc(st.text)+'</div>' +
+      (gm ? '<div class="stage-status'+(st.hot?' hot':'')+'" id="stageStatus">'+esc(st.text)+'</div>' : '') +
       noticeHtml +
       '<div class="wheel-frame"><div class="pointer"></div><div class="wheel" id="wheelEl" style="background:'+conic+';'+restRotation+'">'+labels+'<div class="wheel-hub">🌎</div></div></div>' +
       '<button class="btn" id="spinBtn" style="margin-top:22px;" '+(canSpin?'':'disabled')+'>GIRAR LA RUEDA</button>' +
