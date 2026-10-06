@@ -1489,19 +1489,49 @@ function renderValidationBlock(postaId){
       '<p style="font-size:.88rem;opacity:.8;">La posta está lista, pero no hay una solicitud activa para los mentores.</p>' +
       '<div class="footer-actions"><button class="btn" data-action="resendRequest" data-posta-id="'+postaId+'">ENVIAR SOLICITUD A LOS MENTORES</button></div></div>';
   }
+  var head;
   if(r.status==='claimed'){
     var mm=mentorById(r.claimedBy); var who = mm ? mentorFullName(mm) : 'Un mentor';
-    return '<div class="card validation-block" style="border-color:var(--success);">' +
-      '<h3>✋ '+esc(who)+' aceptó su solicitud</h3>' +
-      '<p style="font-size:.88rem;opacity:.8;margin:6px 0 0;">Está en camino para revisar la posta. Tengan esta pantalla abierta para mostrarle lo que hicieron.</p>' +
-    '</div>';
+    head = '<div class="info-box">✋ '+esc(who)+' aceptó su solicitud y está en camino.</div>';
+  } else {
+    head = '<div class="info-box">Solicitud enviada a todos los mentores disponibles (hace '+formatMinutes(minutesAgo(r.createdAt))+'). Cuando llegue el mentor, registren aquí la validación.</div>';
   }
-  return '<div class="info-box">Solicitud enviada a todos los mentores disponibles.</div>' +
+  var pre = r.status==='claimed' ? r.claimedBy : '';
+  var options = loadMentors().filter(function(m){ return m.estado!=='inactivo'; }).map(function(m){
+    var extra = m.specialty||m.org ? (' — '+[m.specialty,m.org].filter(Boolean).join(' · ')) : '';
+    var suffix = m.estado==='ocupado' ? ' (Validando)' : (m.estado==='no_disponible' ? ' (No disponible)' : '');
+    var disabled = m.estado==='no_disponible' ? 'disabled' : '';
+    return '<option value="'+m.id+'" '+disabled+(m.id===pre?' selected':'')+'>'+esc(mentorFullName(m))+esc(extra)+esc(suffix)+'</option>';
+  }).join('');
+  return head +
     '<div class="card validation-block">' +
-      '<h3>ESPERANDO A UN MENTOR</h3>' +
-      '<p style="font-size:.88rem;opacity:.8;margin:6px 0 0;">Enviada hace '+formatMinutes(minutesAgo(r.createdAt))+'. Cuando un mentor la acepte, lo van a ver acá.</p>' +
-      '<div class="footer-actions"><button class="btn ghost small" data-action="cancelRequest" data-posta-id="'+postaId+'">CANCELAR SOLICITUD Y SEGUIR EDITANDO</button></div>' +
+      '<h3>VALIDACIÓN DE POSTA</h3>' +
+      '<label for="valMentor">Mentor/facilitador que valida</label>' +
+      '<select id="valMentor"><option value="">Elegir…</option>'+options+'</select>' +
+      '<label for="valObs">Observación del mentor/facilitador</label>' +
+      '<textarea id="valObs" placeholder="Opcional"></textarea>' +
+      '<div class="footer-actions"><button class="btn" data-action="approvePostaGroup" data-approve-posta="'+postaId+'">APROBAR POSTA</button>' +
+      (r.status==='open' ? '<button class="btn ghost small" data-action="cancelRequest" data-posta-id="'+postaId+'">CANCELAR SOLICITUD Y SEGUIR EDITANDO</button>' : '') +
+      '</div>' +
     '</div>';
+}
+/* Aprobación registrada por el grupo en su pantalla (como en la V2). Usa el
+   mismo núcleo de aprobación: historial, actividad e informes no cambian. */
+function approvePostaGroup(postaId){
+  var mentorId=getVal('valMentor','');
+  if(!mentorId){ state.notice='Seleccioná qué mentor o facilitador está validando.'; render(); return; }
+  var mentor=mentorById(mentorId); if(!mentor) return;
+  var team=currentTeam(); if(!team || team.postas[postaId].status!=='pending_validation') return;
+  var obs=getVal('valObs','').trim();
+  var r=activeRequestFor(team.id, postaId);
+  var nextTitle=approvePostaCore(team.id, postaId, mentor, obs, r?r.id:null);
+  if(r){
+    var claimer=r.claimedBy;
+    updateRequest(r.id, function(x){ x.status='approved'; x.observation=obs; x.resolvedAt=Date.now(); });
+    if(claimer) freeMentorIfBusy(claimer);
+  }
+  state.notice=''; state.confirmApproved={postaId:postaId, nextTitle:nextTitle};
+  render(); window.scrollTo(0,0);
 }
 
 /* Núcleo de aprobación: mismo registro que la V2 (historial, KPIs y reaperturas siguen igual). */
@@ -2525,8 +2555,8 @@ function renderMentor(){
     }).join('') + '</div>';
   } else {
     var mineHtml = mine ? ('<div class="card validation-block" style="border-color:var(--success);"><b style="font-size:.8rem;text-transform:uppercase;opacity:.7;">Tu validación en curso</b>' +
-      '<div class="req-card"><div class="req-info"><b>'+esc(mine.teamLabel)+' · Posta '+POSTA_BY_ID[mine.postaId].num+' — '+POSTA_BY_ID[mine.postaId].title+'</b><small>Aceptada hace '+formatMinutes(minutesAgo(mine.claimedAt))+'</small></div>' +
-      '<button class="btn small" data-action="openReview" data-req="'+mine.id+'">REVISAR POSTA</button></div></div>') : '';
+      '<div class="req-card"><div class="req-info"><b>'+esc(mine.teamLabel)+' '+pill('esperando','VALIDACIÓN')+' · Posta '+POSTA_BY_ID[mine.postaId].num+' — '+POSTA_BY_ID[mine.postaId].title+'</b><small>Aceptada hace '+formatMinutes(minutesAgo(mine.claimedAt))+'. La validación se registra en la pantalla del grupo.</small></div>' +
+      '<a href="#" data-action="releaseRequest" data-req="'+mine.id+'" style="font-size:.78rem;opacity:.7;">No puedo ir: devolver a pendientes</a></div></div>') : '';
     var canAccept = me.estado==='disponible' && !busy;
     var whyNot = busy ? 'Terminá tu atención en curso para aceptar otra.' : (me.estado!=='disponible' ? 'Ponete disponible para aceptar solicitudes.' : '');
     var myConsHtml = myCons ? ('<div class="card" style="border-color:var(--success);"><b style="font-size:.8rem;text-transform:uppercase;opacity:.7;">Tu consulta en curso</b>' +
@@ -2588,7 +2618,8 @@ function claimRequest(reqId){
   updateRequest(reqId, function(r){ r.status='claimed'; r.claimedBy=me.id; r.claimedAt=Date.now(); });
   var tEl=document.getElementById('toast'); if(tEl) tEl.hidden=true; document.title=baseTitle;
   setMentorEstadoRaw(me.id,'ocupado');
-  state.mentorNotice=''; state.showReject=false; state.mentorReviewId=reqId; render(); window.scrollTo(0,0);
+  state.mentorNotice='Aceptaste: '+fresh.teamLabel+' · Posta '+POSTA_BY_ID[fresh.postaId].num+'. Andá con el grupo; la validación se registra en su pantalla.';
+  state.showReject=false; state.mentorReviewId=null; render(); window.scrollTo(0,0);
 }
 function claimConsulta(id){
   var me=currentMentor(); if(!me) return;
@@ -2783,6 +2814,7 @@ function afterRender(){
     if(an==='submitMentorPin'){ submitMentorPin(); return; }
     if(an==='mentorLogout'){ mentorLogout(); return; }
     if(an==='claimRequest'){ claimRequest(act.getAttribute('data-req')); return; }
+    if(an==='approvePostaGroup'){ approvePostaGroup(act.getAttribute('data-approve-posta')); return; }
     if(an==='openConsult'){ openConsult(); return; }
     if(an==='closeConsult'){ closeConsult(); return; }
     if(an==='callMentor'){ callMentor(act.getAttribute('data-mentor-id')); return; }
