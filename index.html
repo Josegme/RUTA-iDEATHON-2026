@@ -150,6 +150,17 @@
   .history-item small{display:block; opacity:.6; margin-top:2px;}
 
   .admin-table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); margin-top:16px;}
+  .act-board{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--paper-2);}
+  .act-table{min-width:760px; font-size:.82rem;}
+  .act-table th{font-size:.68rem; text-transform:uppercase; letter-spacing:.04em; opacity:.7; padding:7px 10px; white-space:normal;}
+  .act-table td{padding:6px 10px; vertical-align:middle;}
+  .act-table tbody tr:last-child td{border-bottom:none;}
+  .act-table tbody tr:hover{background:transparent; cursor:default;}
+  .act-table .act-sub{font-size:.7rem; opacity:.6;}
+  .act-table .act-now{white-space:normal; min-width:240px;}
+  .act-table .act-num{font-family:var(--font-display); font-weight:700; text-align:center; width:9%;}
+  .act-table tr.act-calling td{background:var(--tint-orange);}
+  .act-table tr.act-calling td:first-child{box-shadow:inset 4px 0 0 var(--brand-secondary);}
   table{border-collapse:collapse; width:100%; min-width:1180px; font-size:.8rem;}
   th,td{padding:9px 11px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap;}
   thead th{background:var(--brand-dark); color:var(--brand-light); position:sticky; top:0;}
@@ -2300,6 +2311,7 @@ function renderMentorActivity(teams){
   var allValidations=[], allRejections=[];
   teams.forEach(function(t){ (t.validations||[]).forEach(function(v){ allValidations.push(v); }); (t.rejections||[]).forEach(function(v){ allRejections.push(v); }); });
   var reqsAll=loadRequests();
+  var consAll=loadConsultas();
 
   var cards = mentors.map(function(m){
     var mine = allValidations.filter(function(v){ return v.mentorId===m.id; });
@@ -2310,20 +2322,31 @@ function renderMentorActivity(teams){
     var claimed = reqsAll.filter(function(r){ return r.claimedBy===m.id && r.claimedAt; });
     var avgResp = claimed.length ? Math.round(claimed.reduce(function(s2,r){ return s2+(r.claimedAt-r.createdAt); },0)/claimed.length/60000) : null;
     var extra=[m.specialty,m.org].filter(Boolean).join(' · ');
-    return '<div class="card" style="margin-bottom:10px;">' +
-      '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">' +
-        '<div><b>'+esc(mentorFullName(m))+'</b>'+(extra?'<div style="font-size:.78rem;opacity:.65;">'+esc(extra)+'</div>':'')+'</div>' +
-        estadoPillForMentor(m) +
-      '</div>' +
-      '<div style="display:flex; gap:22px; flex-wrap:wrap; margin-top:12px; font-size:.85rem;">' +
-        '<div><b style="font-family:var(--font-display);font-size:1.2rem;">'+mine.length+'</b><br><span style="opacity:.65;font-size:.75rem;">aprobadas</span></div>' +
-        '<div><b style="font-family:var(--font-display);font-size:1.2rem;">'+mineRej.length+'</b><br><span style="opacity:.65;font-size:.75rem;">no aprobadas</span></div>' +
-        '<div><b style="font-family:var(--font-display);font-size:1.2rem;">'+grupos.length+'</b><br><span style="opacity:.65;font-size:.75rem;">grupos distintos</span></div>' +
-        '<div><b style="font-family:var(--font-display);font-size:1.2rem;">'+formatMinutes(avgResp)+'</b><br><span style="opacity:.65;font-size:.75rem;">respuesta promedio</span></div>' +
-        '<div><b style="font-family:var(--font-display);font-size:1.2rem;">'+formatTimestamp(lastTs)+'</b><br><span style="opacity:.65;font-size:.75rem;">última actividad</span></div>' +
-      '</div>' +
-    '</div>';
+    /* En vivo: qué grupo lo está llamando (consulta) o a quién está atendiendo */
+    var now=[], calling=false;
+    consAll.filter(function(c){ return c.mentorId===m.id && c.status==='open'; }).forEach(function(c){
+      calling=true; now.push('<b>📞 '+esc(c.teamLabel)+' lo está llamando</b> · consulta · hace '+formatMinutes(minutesAgo(c.createdAt)));
+    });
+    consAll.filter(function(c){ return c.mentorId===m.id && c.status==='claimed'; }).forEach(function(c){
+      now.push('Atendiendo a <b>'+esc(c.teamLabel)+'</b> · consulta · hace '+formatMinutes(minutesAgo(c.claimedAt)));
+    });
+    reqsAll.filter(function(r){ return r.claimedBy===m.id && r.status==='claimed'; }).forEach(function(r){
+      now.push('Validando a <b>'+esc(r.teamLabel)+'</b> · Posta '+POSTA_BY_ID[r.postaId].num+' · hace '+formatMinutes(minutesAgo(r.claimedAt)));
+    });
+    return '<tr class="'+(calling?'act-calling':'')+'">' +
+      '<td><b>'+esc(mentorFullName(m))+'</b>'+(extra?'<div class="act-sub">'+esc(extra)+'</div>':'')+'</td>' +
+      '<td>'+estadoPillForMentor(m)+'</td>' +
+      '<td class="act-now">'+(now.length?now.join('<br>'):'<span style="opacity:.45;">—</span>')+'</td>' +
+      '<td class="act-num">'+mine.length+'</td>' +
+      '<td class="act-num">'+mineRej.length+'</td>' +
+      '<td class="act-num">'+grupos.length+'</td>' +
+      '<td class="act-num">'+formatMinutes(avgResp)+'</td>' +
+      '<td class="act-num">'+formatTimestamp(lastTs)+'</td>' +
+    '</tr>';
   }).join('');
+  var board = '<div class="act-board"><table class="act-table">' +
+    '<thead><tr><th>Mentor</th><th>Estado</th><th>Ahora (en vivo)</th><th>Aprobadas</th><th>No aprobadas</th><th>Grupos distintos</th><th>Respuesta promedio</th><th>Última actividad</th></tr></thead>' +
+    '<tbody>'+cards+'</tbody></table></div>';
 
   var f=state.activityFilters;
   var filtered = allValidations.map(function(v){ v._ok=true; return v; }).concat(allRejections.map(function(v){ v._ok=false; return v; })).filter(function(v){
@@ -2345,7 +2368,7 @@ function renderMentorActivity(teams){
   }).join('');
 
   return '<p style="opacity:.7;font-size:.85rem;">Mentorías registradas — uso interno del equipo organizador.</p>' +
-    cards +
+    board +
     '<div class="filters" style="margin-top:20px;">' +
       '<select data-activity-filter="mentor"><option value="">Todos los mentores</option>'+mentorOpts+'</select>' +
       '<select data-activity-filter="team"><option value="">Todos los grupos</option>'+teamOpts+'</select>' +
